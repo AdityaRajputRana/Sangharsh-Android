@@ -2,4 +2,12 @@
     <string name="app_name">Sangharsh</string>
 
     <string name="splash_app">Sangharsh\nThe Learning App</string>
+
+    <string name="login_enter_phone">Please enter you 10 digit mobile number</string>
+    <string name="login_phone">Mobile No</string>
+    <string name="login_continue">Continue</string>
+    <string name="login_or">or</string>
+    <string name="login_login_with_google">Login With Google</string>
+
+
 </resources>
