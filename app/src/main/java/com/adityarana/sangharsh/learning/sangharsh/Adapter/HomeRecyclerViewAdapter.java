@@ -39,14 +39,12 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         final Category category = categories.get(position);
-        Log.i("Get Data", "Setting Views");
-
         holder.catName.setText(category.getName());
         holder.subCat.setText(category.getSubcat() + " Sub-Categories");
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, category.getId() + " Card Clicked", Toast.LENGTH_LONG);
+                Toast.makeText(context, category.getId() + " Card Clicked", Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -69,7 +67,6 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
 
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-            Log.i("Get Data", "Setting ViewHolder");
             catName = itemView.findViewById(R.id.catName);
             subCat = itemView.findViewById(R.id.subCat);
             lockImg = itemView.findViewById(R.id.lockImg);

@@ -12,6 +12,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_height="wrap_content"
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
         app:cardBackgroundColor="@android:color/holo_orange_dark"
         app:cardUseCompatPadding="true"
         app:cardElevation="8dp"

@@ -29,14 +29,12 @@ public class HomeFragment extends Fragment {
     }
 
     public void setHome(HomeDocument homeDocument){
-        Log.i("Get Data", "Setting Recycler View");
         HomeRecyclerViewAdapter adapter = new HomeRecyclerViewAdapter(homeDocument.getCourses(), getActivity());
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
-        Log.i("Get Data", "Set Recycler View");
     }
 
     @Override
