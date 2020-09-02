@@ -8,8 +8,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.adityarana.sangharsh.learning.sangharsh.Model.Category;
 import com.adityarana.sangharsh.learning.sangharsh.Model.HomeCategory;
+import com.adityarana.sangharsh.learning.sangharsh.Model.SubCategory;
 import com.adityarana.sangharsh.learning.sangharsh.R;
 
 import java.util.ArrayList;
@@ -18,39 +18,34 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerViewAdapter.MyViewHolder> {
+public class CategoryRecyclerViewAdpter extends RecyclerView.Adapter<CategoryRecyclerViewAdpter.MyViewHolder> {
 
-    private ArrayList<HomeCategory> categories;
+    private ArrayList<SubCategory> categories;
     private Context context;
-    private Listener listener;
 
-    public HomeRecyclerViewAdapter(ArrayList<HomeCategory> categories, Context context, Listener listener) {
+    public CategoryRecyclerViewAdpter(ArrayList<SubCategory> categories, Context context) {
         this.categories = categories;
         this.context = context;
-        this.listener = listener;
-    }
-
-    public interface Listener {
-        void onClick(HomeCategory category);
     }
 
     @NonNull
     @Override
-    public MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public CategoryRecyclerViewAdpter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.home_recyclew_view, parent, false);
-        return new MyViewHolder(view);
+        return new CategoryRecyclerViewAdpter.MyViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
-        final HomeCategory category = categories.get(position);
+    public void onBindViewHolder(@NonNull CategoryRecyclerViewAdpter.MyViewHolder holder, int position) {
+        final SubCategory category = categories.get(position);
         holder.catName.setText(category.getName());
-        holder.subCat.setText(category.getSubcat() + " Sub-Categories");
+        holder.lockImg.setVisibility(View.GONE);
+        holder.subCat.setText(category.getLectures() + " Sub-Lectures");
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                listener.onClick(category);
+                Toast.makeText(context, category.getId() + " Card Clicked", Toast.LENGTH_LONG).show();
             }
         });
     }

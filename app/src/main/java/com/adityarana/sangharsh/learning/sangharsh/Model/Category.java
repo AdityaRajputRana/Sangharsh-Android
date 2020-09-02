@@ -1,8 +1,27 @@
 package com.adityarana.sangharsh.learning.sangharsh.Model;
 
+import java.util.ArrayList;
+
 public class Category {
+
     private String id, name;
     private int subcat;
+    private ArrayList<SubCategory> subcategories;
+
+    public ArrayList<SubCategory> getSubcategories() {
+        return subcategories;
+    }
+
+    public void setSubcategories(ArrayList<SubCategory> subcategories) {
+        this.subcategories = subcategories;
+    }
+
+    public Category(String id, String name, int subcat, ArrayList<SubCategory> subcategories) {
+        this.id = id;
+        this.name = name;
+        this.subcat = subcat;
+        this.subcategories = subcategories;
+    }
 
     public String getId() {
         return id;
@@ -28,11 +47,6 @@ public class Category {
         this.subcat = subcat;
     }
 
-    public Category(String id, String name, int subcat) {
-        this.id = id;
-        this.name = name;
-        this.subcat = subcat;
+    public Category() {
     }
-
-    public Category(){}
 }

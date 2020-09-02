@@ -3,7 +3,7 @@ package com.adityarana.sangharsh.learning.sangharsh.Model;
 import java.util.ArrayList;
 
 public class HomeDocument {
-    private ArrayList<Category> courses;
+    private ArrayList<HomeCategory> courses;
 
 
     public HomeDocument(ArrayList courses) {
@@ -13,11 +13,11 @@ public class HomeDocument {
     public HomeDocument() {
     }
 
-    public ArrayList<Category> getCourses() {
+    public ArrayList<HomeCategory> getCourses() {
         return courses;
     }
 
-    public void setCourses(ArrayList<Category> courses) {
+    public void setCourses(ArrayList<HomeCategory> courses) {
         this.courses = courses;
     }
 }
