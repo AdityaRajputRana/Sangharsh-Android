@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,13 +16,14 @@ import android.widget.TextView;
 import com.adityarana.sangharsh.learning.sangharsh.Adapter.CategoryRecyclerViewAdpter;
 import com.adityarana.sangharsh.learning.sangharsh.Model.Category;
 import com.adityarana.sangharsh.learning.sangharsh.Model.HomeCategory;
+import com.adityarana.sangharsh.learning.sangharsh.Model.SubCategory;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 
-public class CategoryActivity extends AppCompatActivity {
+public class CategoryActivity extends AppCompatActivity implements CategoryRecyclerViewAdpter.Listener {
 
     RecyclerView recyclerView;
     ProgressBar progressBar;
@@ -83,11 +85,18 @@ public class CategoryActivity extends AppCompatActivity {
 
     private void setUpRecyclerView() {
         recyclerView = findViewById(R.id.recyclerView);
-        CategoryRecyclerViewAdpter adapter = new CategoryRecyclerViewAdpter(category.getSubcategories(), this);
+        CategoryRecyclerViewAdpter adapter = new CategoryRecyclerViewAdpter(category.getSubcategories(), this, this);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setVisibility(View.VISIBLE);
         progressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void openLectures(SubCategory subCategory) {
+        Intent intent = new Intent(this, LecturesActivity.class);
+        intent.putExtra("SUB_CATEGORY", new Gson().toJson(subCategory));
+        startActivity(intent);
     }
 }

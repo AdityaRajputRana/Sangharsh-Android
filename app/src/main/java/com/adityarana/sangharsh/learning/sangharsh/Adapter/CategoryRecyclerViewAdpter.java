@@ -22,10 +22,16 @@ public class CategoryRecyclerViewAdpter extends RecyclerView.Adapter<CategoryRec
 
     private ArrayList<SubCategory> categories;
     private Context context;
+    private Listener listener;
 
-    public CategoryRecyclerViewAdpter(ArrayList<SubCategory> categories, Context context) {
+    public interface Listener{
+        void openLectures(SubCategory subCategory);
+    }
+
+    public CategoryRecyclerViewAdpter(ArrayList<SubCategory> categories, Context context, Listener listener) {
         this.categories = categories;
         this.context = context;
+        this.listener = listener;
     }
 
     @NonNull
@@ -45,7 +51,7 @@ public class CategoryRecyclerViewAdpter extends RecyclerView.Adapter<CategoryRec
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, category.getId() + " Card Clicked", Toast.LENGTH_LONG).show();
+                listener.openLectures(category);
             }
         });
     }
