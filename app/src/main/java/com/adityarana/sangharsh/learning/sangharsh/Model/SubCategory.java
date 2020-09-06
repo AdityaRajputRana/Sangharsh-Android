@@ -4,15 +4,27 @@ import java.util.ArrayList;
 
 public class SubCategory {
 
-    private String id, name;
+    private String id;
+    private String name;
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    private String category;
     private int lectures;
     private ArrayList<Video> videos;
 
-    public SubCategory(String id, String name, int lectures, ArrayList<Video> videos) {
+    public SubCategory(String id, String name, int lectures, ArrayList<Video> videos, String category) {
         this.id = id;
         this.name = name;
         this.lectures = lectures;
         this.videos = videos;
+        this.category = category;
     }
 
     public SubCategory() {

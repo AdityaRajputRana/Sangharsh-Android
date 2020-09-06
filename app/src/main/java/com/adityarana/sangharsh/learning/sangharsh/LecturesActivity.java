@@ -5,14 +5,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
 import com.adityarana.sangharsh.learning.sangharsh.Adapter.LectureRecycleViewAdapter;
 import com.adityarana.sangharsh.learning.sangharsh.Model.SubCategory;
+import com.adityarana.sangharsh.learning.sangharsh.Model.Video;
 import com.google.gson.Gson;
 
-public class LecturesActivity extends AppCompatActivity {
+public class LecturesActivity extends AppCompatActivity implements LectureRecycleViewAdapter.Listener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +28,7 @@ public class LecturesActivity extends AppCompatActivity {
                 SubCategory subCategory = new Gson().fromJson(subCategoryStr, SubCategory.class);
                 if (subCategory.getLectures() >= 0){
                     titleTxt.setText(subCategory.getName());
-                    LectureRecycleViewAdapter adapter = new LectureRecycleViewAdapter(subCategory.getVideos());
+                    LectureRecycleViewAdapter adapter = new LectureRecycleViewAdapter(subCategory.getVideos(), this);
                     LinearLayoutManager manager = new LinearLayoutManager(this);
                     recyclerView.setAdapter(adapter);
                     recyclerView.setLayoutManager(manager);
@@ -37,4 +39,11 @@ public class LecturesActivity extends AppCompatActivity {
                 titleTxt.setText("Some Error Occured");
             }
         }
+
+    @Override
+    public void playVideo(Video video) {
+        Intent intent = new Intent(this, PlayerActivity.class);
+        intent.putExtra("VIDEO", new Gson().toJson(video));
+        startActivity(intent);
     }
+}

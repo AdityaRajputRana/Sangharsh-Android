@@ -1,16 +1,34 @@
 package com.adityarana.sangharsh.learning.sangharsh.Model;
 
 public class Video {
-    private String id, name, description;
+    private String id, name, description, category, subcat;
     private boolean sample;
     private int time;
 
-    public Video(String id, String name, String description, boolean sample, int time) {
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getSubcat() {
+        return subcat;
+    }
+
+    public void setSubcat(String subcat) {
+        this.subcat = subcat;
+    }
+
+    public Video(String id, String name, String description, boolean sample, int time, String category, String subcat) {
         this.id = id;
         this.name = name;
         this.description = description;
         this.sample = sample;
         this.time = time;
+        this.category = category;
+        this.subcat = subcat;
     }
 
     public Video() {

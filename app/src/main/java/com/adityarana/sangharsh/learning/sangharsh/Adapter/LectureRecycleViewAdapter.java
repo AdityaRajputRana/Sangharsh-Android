@@ -17,9 +17,15 @@ import androidx.recyclerview.widget.RecyclerView;
 public class LectureRecycleViewAdapter extends RecyclerView.Adapter<LectureRecycleViewAdapter.LectureViewHolder> {
 
     private ArrayList<Video> videos;
+    private Listener listener;
 
-    public LectureRecycleViewAdapter(ArrayList<Video> videos) {
+    public interface Listener{
+        void playVideo(Video video);
+    }
+
+    public LectureRecycleViewAdapter(ArrayList<Video> videos, Listener listener) {
         this.videos = videos;
+        this.listener = listener;
     }
 
     @NonNull
@@ -29,9 +35,15 @@ public class LectureRecycleViewAdapter extends RecyclerView.Adapter<LectureRecyc
     }
 
     @Override
-    public void onBindViewHolder(@NonNull LectureViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull LectureViewHolder holder, final int position) {
         holder.indexText.setText(Integer.toString(position + 1));
         holder.titleTxt.setText(videos.get(position).getName());
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.playVideo(videos.get(position));
+            }
+        });
     }
 
     @Override
