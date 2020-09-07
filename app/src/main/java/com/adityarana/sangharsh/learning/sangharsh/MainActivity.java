@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.adityarana.sangharsh.learning.sangharsh.Adapter.HomeViewPagerAdapter;
+import com.adityarana.sangharsh.learning.sangharsh.Customs.HomeViewPager;
+import com.adityarana.sangharsh.learning.sangharsh.Fragments.HomeFragment;
 import com.adityarana.sangharsh.learning.sangharsh.Model.HomeDocument;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -46,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setUpViewPager() {
-        ViewPager viewPager;
+        HomeViewPager viewPager;
         viewPager = findViewById(R.id.viewPager);
         viewPagerAdapter = new HomeViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(viewPagerAdapter);

@@ -11,9 +11,11 @@ import androidx.fragment.app.FragmentPagerAdapter;
 public class HomeViewPagerAdapter extends FragmentPagerAdapter {
     HomeFragment homeFrag;
     Fragment profileFrag;
+    FragmentManager fragmentManager;
 
     public HomeViewPagerAdapter(@NonNull FragmentManager fm) {
         super(fm);
+        this.fragmentManager = fm;
     }
 
     @NonNull
@@ -28,6 +30,8 @@ public class HomeViewPagerAdapter extends FragmentPagerAdapter {
         }
     }
 
+
+
     @Override
     public int getCount() {
         return 1;
@@ -35,6 +39,6 @@ public class HomeViewPagerAdapter extends FragmentPagerAdapter {
 
     public void setHome(HomeDocument home){
         if (homeFrag == null) homeFrag = new HomeFragment();
-        homeFrag.setHome(home);
+        homeFrag.setHome(home, fragmentManager);
     }
 }
