@@ -1,11 +1,17 @@
 package com.adityarana.sangharsh.learning.sangharsh;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
+import me.ibrahimsn.lib.OnItemReselectedListener;
+import me.ibrahimsn.lib.OnItemSelectedListener;
+import me.ibrahimsn.lib.SmoothBottomBar;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import com.adityarana.sangharsh.learning.sangharsh.Adapter.HomeViewPagerAdapter;
 import com.adityarana.sangharsh.learning.sangharsh.Customs.HomeViewPager;
@@ -47,10 +53,38 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
     private void setUpViewPager() {
         HomeViewPager viewPager;
         viewPager = findViewById(R.id.viewPager);
         viewPagerAdapter = new HomeViewPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(viewPagerAdapter);
+        SmoothBottomBar bottomBar = findViewById(R.id.bottomBar);
+        bottomBar.setOnItemSelectedListener(new OnItemSelectedListener() {
+            @Override
+            public boolean onItemSelect(int i) {
+                if (viewPager.getCurrentItem() != i) {
+                    viewPager.setCurrentItem(i);
+                }
+                return false;
+            }
+        });
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                bottomBar.setItemActiveIndex(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+
+            }
+        });
     }
 }

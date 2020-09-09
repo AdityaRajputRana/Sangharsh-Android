@@ -1,6 +1,7 @@
 package com.adityarana.sangharsh.learning.sangharsh.Adapter;
 
 import com.adityarana.sangharsh.learning.sangharsh.Fragments.HomeFragment;
+import com.adityarana.sangharsh.learning.sangharsh.Fragments.ProfileFragment;
 import com.adityarana.sangharsh.learning.sangharsh.Model.HomeDocument;
 
 import androidx.annotation.NonNull;
@@ -25,6 +26,8 @@ public class HomeViewPagerAdapter extends FragmentPagerAdapter {
             case 0:
                 if (homeFrag == null) homeFrag = new HomeFragment();
                 return homeFrag;
+            case 1:
+                return new ProfileFragment();
             default:
                 return null;
         }
@@ -34,7 +37,7 @@ public class HomeViewPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 1;
+        return 2;
     }
 
     public void setHome(HomeDocument home){

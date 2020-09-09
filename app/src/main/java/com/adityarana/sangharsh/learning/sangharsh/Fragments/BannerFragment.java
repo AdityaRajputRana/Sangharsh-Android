@@ -67,7 +67,7 @@ public class BannerFragment extends Fragment {
         ImageView imageView = view.findViewById(R.id.imageView);
         Picasso.get()
                 .load(url)
-                .transform(new RoundedCornersTransformation(100, 50))
+                .transform(new RoundedCornersTransformation(50, 10))
                 .into(imageView);
     }
 
