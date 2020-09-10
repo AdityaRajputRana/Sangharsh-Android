@@ -2,6 +2,7 @@ package com.adityarana.sangharsh.learning.sangharsh.Adapter;
 
 import com.adityarana.sangharsh.learning.sangharsh.Fragments.HomeFragment;
 import com.adityarana.sangharsh.learning.sangharsh.Fragments.ProfileFragment;
+import com.adityarana.sangharsh.learning.sangharsh.Model.HomeCategory;
 import com.adityarana.sangharsh.learning.sangharsh.Model.HomeDocument;
 
 import java.util.ArrayList;
@@ -13,7 +14,7 @@ import androidx.fragment.app.FragmentPagerAdapter;
 
 public class HomeViewPagerAdapter extends FragmentPagerAdapter {
     HomeFragment homeFrag;
-    Fragment profileFrag;
+    ProfileFragment profileFrag;
     FragmentManager fragmentManager;
 
     public HomeViewPagerAdapter(@NonNull FragmentManager fm) {
@@ -29,7 +30,8 @@ public class HomeViewPagerAdapter extends FragmentPagerAdapter {
                 if (homeFrag == null) homeFrag = new HomeFragment();
                 return homeFrag;
             case 1:
-                return new ProfileFragment();
+                if (profileFrag == null) profileFrag = new ProfileFragment();
+                return profileFrag;
             default:
                 return null;
         }
@@ -43,7 +45,10 @@ public class HomeViewPagerAdapter extends FragmentPagerAdapter {
     }
 
     public void setHome(HomeDocument home, ArrayList<String> purchased){
-        if (homeFrag == null) homeFrag = new HomeFragment();
+        if (homeFrag == null) {homeFrag = new HomeFragment();}
         homeFrag.setHome(home, purchased);
+        if (profileFrag == null){profileFrag = new ProfileFragment();}
+        profileFrag.setPurchasedCourses(home.getCourses(), purchased);
     }
+
 }

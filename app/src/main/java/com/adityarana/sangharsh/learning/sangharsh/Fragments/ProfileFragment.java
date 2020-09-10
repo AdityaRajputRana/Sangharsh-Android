@@ -19,9 +19,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.adityarana.sangharsh.learning.sangharsh.LoginActivity;
+import com.adityarana.sangharsh.learning.sangharsh.Model.HomeCategory;
+import com.adityarana.sangharsh.learning.sangharsh.PurchasedActivity;
 import com.adityarana.sangharsh.learning.sangharsh.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -29,12 +32,16 @@ import java.util.Arrays;
 
 
 public class ProfileFragment extends Fragment {
+    private ArrayList<HomeCategory> purchasedCats;
+    private ArrayList<String> purchasedCourses;
 
     private ArrayList<String> buttonNames = new ArrayList<>(Arrays.asList(
+            "Purchased Courses",
             "Log out"
     ));
 
     private ArrayList<Integer> buttonIcons = new ArrayList<>(Arrays.asList(
+            R.drawable.ic_outline_purchased_turned_in_24,
             R.drawable.ic_baseline_exit_to_app_24
     ));
 
@@ -74,7 +81,6 @@ public class ProfileFragment extends Fragment {
     private void createButtonsCode() {
         if (buttonNames != null && buttonNames.size() > 0){
             for (int i = 0; i<buttonNames.size(); i++){
-
                 View layout = LayoutInflater.from(mLinearLayout.getContext()).inflate(R.layout.profile_view_item, mLinearLayout, false);
                 TextView textView = layout.findViewById(R.id.btnNameTxt);
                 ImageView imageView = layout.findViewById(R.id.iconImgView);
@@ -92,6 +98,9 @@ public class ProfileFragment extends Fragment {
         public void onClick(View view) {
             switch (view.getId()){
                 case 0:
+                    startPurchased();
+                    break;
+                case 1:
                     logOut();
                     break;
                 default:
@@ -99,6 +108,15 @@ public class ProfileFragment extends Fragment {
             }
         }
     };
+
+    private void startPurchased() {
+        if(purchasedCats != null){
+            Intent intent = new Intent(getActivity(), PurchasedActivity.class);
+            intent.putExtra("PURCHASED_CATS", new Gson().toJson(purchasedCats));
+            intent.putExtra("PURCHASED_COURSES", new Gson().toJson(purchasedCourses));
+            startActivity(intent);
+        }
+    }
 
     private void logOut() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -121,7 +139,13 @@ public class ProfileFragment extends Fragment {
         getActivity().finish();
     }
 
-    public void setPurchasedCourses(){
-
+    public void setPurchasedCourses(ArrayList<HomeCategory> categories, ArrayList<String> purchased){
+        purchasedCats = new ArrayList<HomeCategory>();
+        purchasedCourses = purchased;
+        for (HomeCategory category: categories) {
+            if (purchased.contains(category.getId())){
+                purchasedCats.add(category);
+            }
+        }
     }
 }

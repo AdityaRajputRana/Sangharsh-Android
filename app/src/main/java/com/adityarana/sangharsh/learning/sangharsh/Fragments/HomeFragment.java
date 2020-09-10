@@ -37,8 +37,6 @@ public class HomeFragment extends Fragment implements HomeRecyclerViewAdapter.Li
     private RecyclerView mrecyclerView;
     private ProgressBar progressBar;
     private ViewPager bannerPager;
-    private Handler bannerHandler;
-    private Runnable bannerRunnable;
     private TextView counterTxt;
     private ArrayList<Banner> banners;
 

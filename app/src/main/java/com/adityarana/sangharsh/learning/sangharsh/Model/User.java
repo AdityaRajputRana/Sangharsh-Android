@@ -8,12 +8,10 @@ public class User {
     String name, photoUrl, uid;
     ArrayList<String> purchasedCourses;
 
-    @PropertyName("purchasedCources")
     public ArrayList<String> getPurchasedCourses() {
         return purchasedCourses;
     }
 
-    @PropertyName("purchasedCources")
     public void setPurchasedCourses(ArrayList<String> purchasedCourses) {
         this.purchasedCourses = purchasedCourses;
     }
