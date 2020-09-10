@@ -66,7 +66,6 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                         if (task.isSuccessful()){
                             if (task.getResult().exists()){
-                                Log.i("GetData", task.getResult().toString());
                                 category = task.getResult().toObject(Category.class);
                                 setUpRecyclerView();
                             } else {

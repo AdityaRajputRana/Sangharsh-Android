@@ -4,6 +4,8 @@ import com.adityarana.sangharsh.learning.sangharsh.Fragments.HomeFragment;
 import com.adityarana.sangharsh.learning.sangharsh.Fragments.ProfileFragment;
 import com.adityarana.sangharsh.learning.sangharsh.Model.HomeDocument;
 
+import java.util.ArrayList;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -40,8 +42,8 @@ public class HomeViewPagerAdapter extends FragmentPagerAdapter {
         return 2;
     }
 
-    public void setHome(HomeDocument home){
+    public void setHome(HomeDocument home, ArrayList<String> purchased){
         if (homeFrag == null) homeFrag = new HomeFragment();
-        homeFrag.setHome(home, fragmentManager);
+        homeFrag.setHome(home, purchased);
     }
 }

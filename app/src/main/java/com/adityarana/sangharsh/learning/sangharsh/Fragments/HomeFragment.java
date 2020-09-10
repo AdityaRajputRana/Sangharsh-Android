@@ -51,8 +51,9 @@ public class HomeFragment extends Fragment implements HomeRecyclerViewAdapter.Li
         return fragment;
     }
 
-    public void setHome(HomeDocument homeDocument, FragmentManager fm){
-        HomeRecyclerViewAdapter adapter = new HomeRecyclerViewAdapter(homeDocument.getCourses(), getActivity(), this);
+    public void setHome(HomeDocument homeDocument, ArrayList<String> purchased){
+        HomeRecyclerViewAdapter adapter = new HomeRecyclerViewAdapter(homeDocument.getCourses(), getActivity(),
+                this, purchased);
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
         mrecyclerView.setAdapter(adapter);
         mrecyclerView.setLayoutManager(layoutManager);

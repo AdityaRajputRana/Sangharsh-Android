@@ -17,14 +17,21 @@ import com.adityarana.sangharsh.learning.sangharsh.Adapter.HomeViewPagerAdapter;
 import com.adityarana.sangharsh.learning.sangharsh.Customs.HomeViewPager;
 import com.adityarana.sangharsh.learning.sangharsh.Fragments.HomeFragment;
 import com.adityarana.sangharsh.learning.sangharsh.Model.HomeDocument;
+import com.adityarana.sangharsh.learning.sangharsh.Model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
     HomeViewPagerAdapter viewPagerAdapter;
+    HomeDocument homeDocument;
+    Boolean toSetUp = true;
+    ArrayList<String> purchased;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,13 +51,46 @@ public class MainActivity extends AppCompatActivity {
                 if (task.isSuccessful()){
                     DocumentSnapshot document = task.getResult();
                     if (document.exists()) {
-                       viewPagerAdapter.setHome(document.toObject(HomeDocument.class));
+                        homeDocument = document.toObject(HomeDocument.class);
+                        if (purchased != null && toSetUp) {
+                            setCourcesUI();
+                        }
                     }
                 } else {
                     Log.i("Get Data", "Data Fetching Error:" + task.getException().toString());
                 }
             }
         });
+
+
+        FirebaseFirestore.getInstance().collection("Users")
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                        if (task.isSuccessful() && task.getResult().exists()) {
+                            User mUser = task.getResult().toObject(User.class);
+                            if (mUser.getPurchasedCourses() != null) {
+                                purchased = mUser.getPurchasedCourses();
+                            } else {
+                                purchased = new ArrayList<String>();
+                            }
+                            if (homeDocument != null && toSetUp) {
+                                setCourcesUI();
+                            }
+                        } else {
+                            purchased = new ArrayList<String>();
+                            if (homeDocument != null && toSetUp) {
+                                setCourcesUI();
+                            }
+                        }
+                    }
+                });
+    }
+
+    private void setCourcesUI() {
+        viewPagerAdapter.setHome(homeDocument, purchased);
     }
 
 

@@ -121,4 +121,7 @@ public class ProfileFragment extends Fragment {
         getActivity().finish();
     }
 
+    public void setPurchasedCourses(){
+
+    }
 }

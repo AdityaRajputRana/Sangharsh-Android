@@ -36,7 +36,6 @@
                 android:id="@+id/lockImg"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:src="@color/colorPrimary"
                 app:layout_constraintTop_toTopOf="@id/catName"
                 app:layout_constraintBottom_toBottomOf="@id/catName"
                 app:layout_constraintEnd_toEndOf="parent"/>

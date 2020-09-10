@@ -1,6 +1,7 @@
 package com.adityarana.sangharsh.learning.sangharsh.Adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,12 +23,14 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
 
     private ArrayList<HomeCategory> categories;
     private Context context;
+    private ArrayList<String> purchasedCourses;
     private Listener listener;
 
-    public HomeRecyclerViewAdapter(ArrayList<HomeCategory> categories, Context context, Listener listener) {
+    public HomeRecyclerViewAdapter(ArrayList<HomeCategory> categories, Context context, Listener listener, ArrayList<String> purchasedCourses) {
         this.categories = categories;
         this.context = context;
         this.listener = listener;
+        this.purchasedCourses = purchasedCourses;
     }
 
     public interface Listener {
@@ -47,6 +50,13 @@ public class HomeRecyclerViewAdapter extends RecyclerView.Adapter<HomeRecyclerVi
         final HomeCategory category = categories.get(position);
         holder.catName.setText(category.getName());
         holder.subCat.setText(category.getSubcat() + " Sub-Categories");
+        Log.i("Purchased", purchasedCourses.toString());
+        Log.i("Current Category", category.getId());
+        if (purchasedCourses.contains(category.getId())){
+            holder.lockImg.setImageResource(R.drawable.ic_baseline_lock_open_24);
+        } else {
+            holder.lockImg.setImageResource(R.drawable.ic_baseline_lock_24);
+        }
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
