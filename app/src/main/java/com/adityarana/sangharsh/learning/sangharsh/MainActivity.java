@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.razorpay.Checkout;
 
 import java.util.ArrayList;
 
@@ -40,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
 
         setUpViewPager();
         getData();
+
+        Checkout.preload(getApplicationContext());
     }
 
     private void getData() {
@@ -90,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setCourcesUI() {
+        toSetUp = false;
         viewPagerAdapter.setHome(homeDocument, purchased);
     }
 

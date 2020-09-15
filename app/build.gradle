@@ -57,7 +57,11 @@ dependencies {
     implementation 'com.squareup.picasso:picasso:2.71828'
     implementation 'jp.wasabeef:picasso-transformations:2.2.1'
     implementation 'com.github.ibrahimsn98:SmoothBottomBar:1.7.6'
+    implementation 'com.razorpay:checkout:1.5.16'
 
+    implementation 'com.squareup.retrofit2:retrofit:2.7.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.7.1'
 
 
 
