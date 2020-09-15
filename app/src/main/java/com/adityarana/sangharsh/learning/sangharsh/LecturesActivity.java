@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.adityarana.sangharsh.learning.sangharsh.Adapter.LectureRecycleViewAdapter;
 import com.adityarana.sangharsh.learning.sangharsh.Model.SubCategory;
@@ -24,14 +25,26 @@ public class LecturesActivity extends AppCompatActivity implements LectureRecycl
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
 
         String subCategoryStr = getIntent().getStringExtra("SUB_CATEGORY");
+        Boolean isPurchased = false;
+        try {
+            isPurchased = getIntent().getBooleanExtra("PURCHASED", false);
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
             if (subCategoryStr != null){
                 SubCategory subCategory = new Gson().fromJson(subCategoryStr, SubCategory.class);
                 if (subCategory.getLectures() >= 0){
                     titleTxt.setText(subCategory.getName());
-                    LectureRecycleViewAdapter adapter = new LectureRecycleViewAdapter(subCategory.getVideos(), this);
-                    LinearLayoutManager manager = new LinearLayoutManager(this);
-                    recyclerView.setAdapter(adapter);
-                    recyclerView.setLayoutManager(manager);
+                    try {
+                        LectureRecycleViewAdapter adapter = new LectureRecycleViewAdapter(subCategory.getVideos(), this,
+                                isPurchased);
+                        LinearLayoutManager manager = new LinearLayoutManager(this);
+                        recyclerView.setAdapter(adapter);
+                        recyclerView.setLayoutManager(manager);
+                    } catch (Exception e){
+                        e.printStackTrace();
+                    }
                 } else {
                     titleTxt.setText("We will be uploading lectures soon");
                 }
@@ -45,5 +58,10 @@ public class LecturesActivity extends AppCompatActivity implements LectureRecycl
         Intent intent = new Intent(this, PlayerActivity.class);
         intent.putExtra("VIDEO", new Gson().toJson(video));
         startActivity(intent);
+    }
+
+    @Override
+    public void promptToBuy() {
+        Toast.makeText(this, "Buy this course to access the locked Videos!", Toast.LENGTH_LONG).show();
     }
 }

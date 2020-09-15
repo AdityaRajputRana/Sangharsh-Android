@@ -18,12 +18,19 @@
         android:id="@+id/titleTxt"
         android:layout_width="0dp"
         app:layout_constraintStart_toEndOf="@id/indexText"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/lockImgView"
         android:layout_marginStart="8dp"
         app:layout_constraintTop_toTopOf="parent"
         android:textSize="18sp"
         android:textColor="@color/black"
         android:layout_height="wrap_content" />
+
+    <ImageView
+        android:id="@+id/lockImgView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="24dp"
+        android:layout_height="24dp" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

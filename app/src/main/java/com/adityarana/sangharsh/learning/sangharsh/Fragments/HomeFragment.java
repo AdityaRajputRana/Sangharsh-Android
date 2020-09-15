@@ -39,6 +39,7 @@ public class HomeFragment extends Fragment implements HomeRecyclerViewAdapter.Li
     private ViewPager bannerPager;
     private TextView counterTxt;
     private ArrayList<Banner> banners;
+    private ArrayList<String> purchased;
 
 
     public HomeFragment() {
@@ -50,6 +51,7 @@ public class HomeFragment extends Fragment implements HomeRecyclerViewAdapter.Li
     }
 
     public void setHome(HomeDocument homeDocument, ArrayList<String> purchased){
+        this.purchased = purchased;
         HomeRecyclerViewAdapter adapter = new HomeRecyclerViewAdapter(homeDocument.getCourses(), getActivity(),
                 this, purchased);
         GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
@@ -104,6 +106,7 @@ public class HomeFragment extends Fragment implements HomeRecyclerViewAdapter.Li
     public void onClick(HomeCategory category) {
         Intent intent = new Intent(getActivity(), CategoryActivity.class);
         intent.putExtra("HOME_CATEGORY", new Gson().toJson(category));
+        intent.putExtra("PURCHASED", purchased.contains(category.getId()));
         startActivity(intent);
     }
 

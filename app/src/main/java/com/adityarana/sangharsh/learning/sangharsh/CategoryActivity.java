@@ -2,6 +2,7 @@ package com.adityarana.sangharsh.learning.sangharsh;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import retrofit2.Call;
@@ -46,16 +47,20 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
     private TextView textView;
     private Button buyNowBtn;
     private OrderRepository orderRepository;
+    private Boolean isPurchased;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
-        setBuyBtn();
         String strHome = getIntent().getStringExtra("HOME_CATEGORY");
+        isPurchased = getIntent().getBooleanExtra("PURCHASED", false);
+        if (!isPurchased){
+            orderRepository = orderRepository.getInstance();
+            setBuyBtn();
+        }
         textView = findViewById(R.id.contentSoonText);
         progressBar = findViewById(R.id.progressBar);
-        orderRepository = orderRepository.getInstance();
         if (strHome.isEmpty()){
             progressBar.setVisibility(View.GONE);
             textView.setText("Some error occured");
@@ -74,6 +79,9 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
 
     private void setBuyBtn() {
         buyNowBtn = findViewById(R.id.buyNowBtn);
+        buyNowBtn.setVisibility(View.VISIBLE);
+        ConstraintLayout layout = findViewById(R.id.mainContraintView);
+        layout.setPadding(0, 0 , 0, 64);
         buyNowBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -170,6 +178,7 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
     public void openLectures(SubCategory subCategory) {
         Intent intent = new Intent(this, LecturesActivity.class);
         intent.putExtra("SUB_CATEGORY", new Gson().toJson(subCategory));
+        intent.putExtra("PURCHASED", isPurchased);
         startActivity(intent);
     }
 
@@ -184,6 +193,8 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 progressBar.setVisibility(View.GONE);
+                buyNowBtn.setVisibility(View.GONE);
+                isPurchased = true;
             }
         });
     }

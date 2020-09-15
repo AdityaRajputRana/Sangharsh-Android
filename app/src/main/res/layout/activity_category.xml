@@ -32,6 +32,7 @@
         android:textColor="@color/white"
         android:textSize="18sp"
         android:elevation="10dp"
+        android:visibility="gone"
         android:text="Buy Now" />
 
     <androidx.core.widget.NestedScrollView
@@ -39,6 +40,7 @@
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/mainContraintView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
