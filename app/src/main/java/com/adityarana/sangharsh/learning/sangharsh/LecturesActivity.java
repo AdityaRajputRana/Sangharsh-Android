@@ -20,6 +20,7 @@ import com.google.gson.Gson;
 import java.util.HashMap;
 
 public class LecturesActivity extends AppCompatActivity implements LectureRecycleViewAdapter.Listener {
+
     RecyclerView recyclerView;
     LectureRecycleViewAdapter adapter;
 
