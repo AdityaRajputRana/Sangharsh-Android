@@ -1,4 +1,4 @@
-package com.adityarana.sangharsh.learning.sangharsh.Interfaces;
+package com.adityarana.sangharsh.learning.sangharsh.Tools;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;

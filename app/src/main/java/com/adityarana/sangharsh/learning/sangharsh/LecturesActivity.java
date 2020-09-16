@@ -7,22 +7,28 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.adityarana.sangharsh.learning.sangharsh.Adapter.LectureRecycleViewAdapter;
 import com.adityarana.sangharsh.learning.sangharsh.Model.SubCategory;
 import com.adityarana.sangharsh.learning.sangharsh.Model.Video;
+import com.adityarana.sangharsh.learning.sangharsh.Tools.Utils;
 import com.google.gson.Gson;
 
+import java.util.HashMap;
+
 public class LecturesActivity extends AppCompatActivity implements LectureRecycleViewAdapter.Listener {
+    RecyclerView recyclerView;
+    LectureRecycleViewAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lectures);
         TextView titleTxt = findViewById(R.id.titleTxt);
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        recyclerView = findViewById(R.id.recyclerView);
 
         String subCategoryStr = getIntent().getStringExtra("SUB_CATEGORY");
         Boolean isPurchased = false;
@@ -37,8 +43,8 @@ public class LecturesActivity extends AppCompatActivity implements LectureRecycl
                 if (subCategory.getLectures() >= 0){
                     titleTxt.setText(subCategory.getName());
                     try {
-                        LectureRecycleViewAdapter adapter = new LectureRecycleViewAdapter(subCategory.getVideos(), this,
-                                isPurchased);
+                        adapter = new LectureRecycleViewAdapter(subCategory.getVideos(), this,
+                                isPurchased, this);
                         LinearLayoutManager manager = new LinearLayoutManager(this);
                         recyclerView.setAdapter(adapter);
                         recyclerView.setLayoutManager(manager);
@@ -64,4 +70,5 @@ public class LecturesActivity extends AppCompatActivity implements LectureRecycl
     public void promptToBuy() {
         Toast.makeText(this, "Buy this course to access the locked Videos!", Toast.LENGTH_LONG).show();
     }
+
 }

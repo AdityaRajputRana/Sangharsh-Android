@@ -10,7 +10,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -21,7 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.adityarana.sangharsh.learning.sangharsh.Adapter.CategoryRecyclerViewAdpter;
-import com.adityarana.sangharsh.learning.sangharsh.Interfaces.OrderRepository;
+import com.adityarana.sangharsh.learning.sangharsh.Tools.OrderRepository;
 import com.adityarana.sangharsh.learning.sangharsh.Model.Category;
 import com.adityarana.sangharsh.learning.sangharsh.Model.HomeCategory;
 import com.adityarana.sangharsh.learning.sangharsh.Model.OrderResponse;

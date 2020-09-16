@@ -3,9 +3,9 @@ package com.adityarana.sangharsh.learning.sangharsh;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.adityarana.sangharsh.learning.sangharsh.Model.Video;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 
 
 public class PlayerActivity extends AppCompatActivity {
+    private SharedPreferences myPref;
     private Video videoInfo;
     private ExoPlayer player;
     private PlayerView playerView;
@@ -32,6 +33,20 @@ public class PlayerActivity extends AppCompatActivity {
         setContentView(R.layout.activity_player);
         videoInfo = new Gson().fromJson(getIntent().getStringExtra("VIDEO"),
                 Video.class);
+        myPref = this.getSharedPreferences("VIDEO_PREF", MODE_PRIVATE);
+        if (myPref.getBoolean("is"+videoInfo.getId()+"Downloaded", false)){
+            getDataFromLocal(videoInfo);
+        } else {
+            getDataFromDB(videoInfo);
+        }
+
+    }
+
+    private void getDataFromLocal(Video videoInfo) {
+        initialisePlayer(myPref.getString(videoInfo.getId()+"AbsPath", null));
+    }
+
+    private void getDataFromDB(Video videoInfo) {
         String category = videoInfo.getCategory();
         String subcat = videoInfo.getSubcat();
         String id = videoInfo.getId();
@@ -42,15 +57,15 @@ public class PlayerActivity extends AppCompatActivity {
                 .child(category)
                 .child("subcat_"+subcat)
                 .child(ids[1] + "." + ids[2])
-        .getDownloadUrl()
-        .addOnCompleteListener(new OnCompleteListener<Uri>() {
-            @Override
-            public void onComplete(@NonNull Task<Uri> task) {
-                if (task.isSuccessful()) {
-                    initialisePlayer(task.getResult().toString());
-                }
-            }
-        });
+                .getDownloadUrl()
+                .addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if (task.isSuccessful()) {
+                            initialisePlayer(task.getResult().toString());
+                        }
+                    }
+                });
     }
 
     private void initialisePlayer(String url){
@@ -61,12 +76,11 @@ public class PlayerActivity extends AppCompatActivity {
         Uri uri = Uri.parse(url);
         MediaSource source = buildMediaSource(uri);
         player.prepare(source);
-        Log.i("URL", url.toString());
     }
 
     private MediaSource buildMediaSource(Uri uri) {
         return new ProgressiveMediaSource.Factory(
-                new DefaultDataSourceFactory(this, "exoplayer-codelab")
+                new DefaultDataSourceFactory(this, "exoplayer-sangharsh")
         ).createMediaSource(uri);
     }
 

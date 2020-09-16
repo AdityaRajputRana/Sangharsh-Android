@@ -1,4 +1,4 @@
-package com.adityarana.sangharsh.learning.sangharsh.Interfaces;
+package com.adityarana.sangharsh.learning.sangharsh.Tools;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
