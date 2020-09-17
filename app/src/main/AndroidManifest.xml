@@ -18,8 +18,10 @@
         <activity android:name=".PlayerActivity" />
         <activity android:name=".LecturesActivity" />
         <activity android:name=".CategoryActivity" />
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".SplashActivity">
+        <activity android:name=".LoginActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".SplashActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
