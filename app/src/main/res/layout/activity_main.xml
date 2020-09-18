@@ -22,7 +22,7 @@
       android:layout_height="60dp"
       app:textSize="18sp"
       app:iconSize="24dp"
-      app:backgroundColor="@color/colorPrimary"
+      app:backgroundColor="@color/colorPrimaryDark"
       app:menu="@menu/home_bottom_menu"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

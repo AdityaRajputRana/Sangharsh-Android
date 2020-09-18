@@ -6,9 +6,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.adityarana.sangharsh.learning.sangharsh.Model.HomeCategory;
+
 import com.adityarana.sangharsh.learning.sangharsh.Model.SubCategory;
 import com.adityarana.sangharsh.learning.sangharsh.R;
 
@@ -21,8 +20,13 @@ import androidx.recyclerview.widget.RecyclerView;
 public class CategoryRecyclerViewAdpter extends RecyclerView.Adapter<CategoryRecyclerViewAdpter.MyViewHolder> {
 
     private ArrayList<SubCategory> categories;
-    private Context context;
     private Listener listener;
+
+    private int[] colorsLight;
+    private int[] colorsDark;
+
+    private int[] next;
+
 
     public interface Listener{
         void openLectures(SubCategory subCategory);
@@ -30,8 +34,27 @@ public class CategoryRecyclerViewAdpter extends RecyclerView.Adapter<CategoryRec
 
     public CategoryRecyclerViewAdpter(ArrayList<SubCategory> categories, Context context, Listener listener) {
         this.categories = categories;
-        this.context = context;
         this.listener = listener;
+
+        this.colorsDark = new int[]{
+                context.getResources().getColor(R.color.green_80),
+                context.getResources().getColor(R.color.red_80),
+                context.getResources().getColor(R.color.blue_80)
+        };
+
+        this.colorsLight = new int[]{
+                context.getResources().getColor(R.color.green_20),
+                context.getResources().getColor(R.color.red_20),
+                context.getResources().getColor(R.color.blue_20)
+        };
+
+        this.next = new int[]{
+                R.drawable.ic_next_green,
+                R.drawable.ic_next_red,
+                R.drawable.ic_next_blue
+        };
+
+
     }
 
     @NonNull
@@ -46,7 +69,6 @@ public class CategoryRecyclerViewAdpter extends RecyclerView.Adapter<CategoryRec
     public void onBindViewHolder(@NonNull CategoryRecyclerViewAdpter.MyViewHolder holder, int position) {
         final SubCategory category = categories.get(position);
         holder.catName.setText(category.getName());
-        holder.lockImg.setVisibility(View.GONE);
         holder.subCat.setText(category.getLectures() + " Sub-Lectures");
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -54,6 +76,14 @@ public class CategoryRecyclerViewAdpter extends RecyclerView.Adapter<CategoryRec
                 listener.openLectures(category);
             }
         });
+
+        int colorIndex = position;
+        while (colorIndex>2){
+            colorIndex = colorIndex-3;
+        }
+        holder.cardView.setCardBackgroundColor(colorsLight[colorIndex]);
+        holder.catName.setTextColor(colorsDark[colorIndex]);
+        holder.lockImg.setImageResource(next[colorIndex]);
     }
 
     @Override

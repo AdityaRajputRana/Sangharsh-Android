@@ -17,14 +17,11 @@ public class BannerPagerAdapter extends FragmentPagerAdapter {
 
     private ArrayList<Banner> banners;
     FragmentManager fragmentManager;
-    private Context context;
 
     public BannerPagerAdapter(@NonNull FragmentManager fm, ArrayList<Banner> banners, Context context) {
         super(fm);
         fragmentManager = fm;
         this.banners = banners;
-        this.context = context;
-        Log.i("Adapter", "Created");
     }
 
     @Override
@@ -35,7 +32,6 @@ public class BannerPagerAdapter extends FragmentPagerAdapter {
     @NonNull
     @Override
     public Fragment getItem(int position) {
-        Log.i("Banner", "adapter:requestingBanner");
         if (position < banners.size()){
             BannerFragment fragment = new BannerFragment(banners.get(position)
             .getImageUrl());

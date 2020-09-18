@@ -1,7 +1,7 @@
 package com.adityarana.sangharsh.learning.sangharsh;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
@@ -37,7 +37,7 @@ public class PurchasedActivity extends AppCompatActivity implements HomeRecycler
         Log.i("Purchased", purchased.toString());
         HomeRecyclerViewAdapter adapter = new HomeRecyclerViewAdapter(categories, this,
                 this, purchased);
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mrecyclerView.setAdapter(adapter);
         mrecyclerView.setLayoutManager(layoutManager);
         mrecyclerView.setVisibility(View.VISIBLE);

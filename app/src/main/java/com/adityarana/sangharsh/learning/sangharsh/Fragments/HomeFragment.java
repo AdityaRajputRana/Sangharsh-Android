@@ -6,14 +6,11 @@ import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
-import android.os.Handler;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -38,6 +35,7 @@ public class HomeFragment extends Fragment implements HomeRecyclerViewAdapter.Li
     private ProgressBar progressBar;
     private ViewPager bannerPager;
     private TextView counterTxt;
+    private TextView availTxt;
     private ArrayList<Banner> banners;
     private ArrayList<String> purchased;
 
@@ -54,7 +52,7 @@ public class HomeFragment extends Fragment implements HomeRecyclerViewAdapter.Li
         this.purchased = purchased;
         HomeRecyclerViewAdapter adapter = new HomeRecyclerViewAdapter(homeDocument.getCourses(), getActivity(),
                 this, purchased);
-        GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mrecyclerView.setAdapter(adapter);
         mrecyclerView.setLayoutManager(layoutManager);
         mrecyclerView.setVisibility(View.VISIBLE);
@@ -84,6 +82,11 @@ public class HomeFragment extends Fragment implements HomeRecyclerViewAdapter.Li
         }
 
         progressBar.setVisibility(View.GONE);
+        availTxt.setVisibility(View.VISIBLE);
+        if (homeDocument.getCourses().size() == 0){
+            availTxt.setText("No courses available right now. Please visit again later!");
+            availTxt.setTextSize(18);
+        }
     }
 
     @Override
@@ -99,6 +102,7 @@ public class HomeFragment extends Fragment implements HomeRecyclerViewAdapter.Li
         progressBar = view.findViewById(R.id.progressBar);
         bannerPager = view.findViewById(R.id.viewPager);
         counterTxt = (TextView) view.findViewById(R.id.counter);
+        availTxt = (TextView) view.findViewById(R.id.availableTxt);
         return view;
     }
 

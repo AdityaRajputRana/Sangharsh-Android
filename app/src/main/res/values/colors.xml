@@ -13,4 +13,13 @@
 
     <color name="red_color">#BFFF0000</color>
 
+    <color name="red_80">#CCCC0000</color>
+    <color name="blue_80">#CC2948FF</color>
+    <color name="green_80">#CC30A179</color>
+
+    <color name="red_20">#33CC0000</color>
+    <color name="green_20">#3330A179</color>
+    <color name="blue_20">#332948FF</color>
+
+    <color name="gray_text">#505050</color>
 </resources>
