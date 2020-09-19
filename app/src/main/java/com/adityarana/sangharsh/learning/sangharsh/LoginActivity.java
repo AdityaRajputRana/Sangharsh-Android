@@ -228,11 +228,13 @@ public class LoginActivity extends AppCompatActivity {
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                 infoTxt.setText("Entered OTP was incorrect. Please Try again");
                                 phoneEditTxt.setEnabled(true);
+                                phoneEditTxt.setHint("Enter OTP");
                                 infoTxt.setTextColor(getResources().getColor(R.color.red_color));
                                 progressBar.setVisibility(View.INVISIBLE);
                             } else {
                                 infoTxt.setText("Verification Timed Out. Enter Your Mobile number again");
                                 phoneEditTxt.setEnabled(true);
+                                phoneEditTxt.setHint("Enter OTP");
                                 phoneEditTxt.setInputType(InputType.TYPE_CLASS_PHONE);
                                 isOtpSend = false;
                             }
@@ -264,7 +266,7 @@ public class LoginActivity extends AppCompatActivity {
             phoneEditTxt.setText("");
             phoneEditTxt.setEnabled(true);
             infoTxt.setText("Enter the OTP sent to your mobile number " + phoneEditTxt.getText().toString());
-
+            phoneEditTxt.setHint("Enter OTP");
             isOtpSend = true;
         }
     };

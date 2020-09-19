@@ -16,7 +16,8 @@
         android:theme="@style/AppTheme">
         <activity android:name=".HelpActivity"></activity>
         <activity android:name=".PurchasedActivity" />
-        <activity android:name=".PlayerActivity" />
+        <activity android:name=".PlayerActivity"
+            android:configChanges="orientation|screenSize"/>
         <activity android:name=".LecturesActivity" />
         <activity android:name=".CategoryActivity" />
         <activity

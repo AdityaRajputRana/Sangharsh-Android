@@ -1,6 +1,7 @@
 package com.adityarana.sangharsh.learning.sangharsh.Fragments;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -71,11 +72,21 @@ public class ProfileFragment extends Fragment {
     private void setDetailsCode() {
         auth = FirebaseAuth.getInstance();
         FirebaseUser user = auth.getCurrentUser();
-        Picasso.get()
-                .load(user.getPhotoUrl())
-                .transform(new CropCircleTransformation())
-                .into(profileImageView);
-        nameTextView.setText(user.getDisplayName());
+        if (user.getPhotoUrl() == null){
+            profileImageView.setImageResource(R.mipmap.ic_launcher);
+        } else {
+            Picasso.get()
+                    .load(user.getPhotoUrl())
+                    .transform(new CropCircleTransformation())
+                    .into(profileImageView);
+        }
+
+        if (user.getDisplayName() == null || user.getDisplayName() == "" || user.getDisplayName().isEmpty()){
+            nameTextView.setText(user.getPhoneNumber().substring(0, 3) + " " + user.getPhoneNumber().substring(3, 8)
+            +  " " + user.getPhoneNumber().substring(8, 13));
+        } else {
+            nameTextView.setText(user.getDisplayName());
+        }
     }
 
     private void createButtonsCode() {
@@ -131,7 +142,7 @@ public class ProfileFragment extends Fragment {
     private void logOut() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Log out");
-        builder.setMessage("Are you sure you want to log out of your Account?");
+        builder.setMessage("Are you sure you want to log out? \n Your DOWNLOADS will be permanently DELETED.");
         builder.setPositiveButton("Log Out", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
@@ -145,6 +156,7 @@ public class ProfileFragment extends Fragment {
     private void startLogOut() {
         auth.signOut();
         Intent intent = new Intent(getActivity(), LoginActivity.class);
+        getActivity().getSharedPreferences("VIDEO_PREF", Context.MODE_PRIVATE).edit().clear().apply();
         startActivity(intent);
         getActivity().finish();
     }

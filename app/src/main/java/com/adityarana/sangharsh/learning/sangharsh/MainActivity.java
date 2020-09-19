@@ -75,8 +75,11 @@ public class MainActivity extends AppCompatActivity {
                         if (task.isSuccessful() && task.getResult().exists()) {
                             User mUser = task.getResult().toObject(User.class);
                             if (mUser.getPurchasedCourses() != null) {
+                                Log.i("Purchased", "These are null");
                                 purchased = mUser.getPurchasedCourses();
                             } else {
+                                Log.i("Purchased", "These are not null" + String.valueOf(mUser.
+                                        getPurchasedCourses().size()));
                                 purchased = new ArrayList<String>();
                             }
                             if (homeDocument != null && toSetUp) {
@@ -84,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
                             }
                         } else {
                             purchased = new ArrayList<String>();
+                            Log.i("Error:Purchased ", String.valueOf(task.getException()));
                             if (homeDocument != null && toSetUp) {
                                 setCourcesUI();
                             }

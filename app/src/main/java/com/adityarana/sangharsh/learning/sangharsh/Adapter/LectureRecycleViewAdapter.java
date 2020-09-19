@@ -76,9 +76,9 @@ implements Utils.Listener{
                 });
             }
         }else if (videos.get(position).isSample()){
-            holder.lockImgView.setImageResource(R.drawable.ic_baseline_lock_open_24_black);
+            holder.lockImgView.setImageResource(R.drawable.ic_open_lock_green);
         } else {
-            holder.lockImgView.setImageResource(R.drawable.ic_baseline_lock_24_black);
+            holder.lockImgView.setImageResource(R.drawable.ic_locked_green);
         }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

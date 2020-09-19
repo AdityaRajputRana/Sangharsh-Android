@@ -1,5 +1,7 @@
 package com.adityarana.sangharsh.learning.sangharsh.Fragments;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -17,9 +19,11 @@ import com.squareup.picasso.Picasso;
 
 public class BannerFragment extends Fragment {
     String url;
+    String redirectUrl;
 
-    public BannerFragment(String imgUrl) {
+    public BannerFragment(String imgUrl, String redirectUrl) {
         this.url = imgUrl;
+        this.redirectUrl = redirectUrl;
         // Required empty public constructor
     }
 
@@ -35,6 +39,17 @@ public class BannerFragment extends Fragment {
         Picasso.get()
                 .load(url)
                 .into(imageView);
+
+        if (redirectUrl != null && !redirectUrl.isEmpty()){
+            view.findViewById(R.id.cardView).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(Intent.ACTION_VIEW);
+                    i.setData(Uri.parse(redirectUrl));
+                    startActivity(i);
+                }
+            });
+        }
     }
 
     @Override

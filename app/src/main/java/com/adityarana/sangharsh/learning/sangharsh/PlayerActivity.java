@@ -4,8 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.adityarana.sangharsh.learning.sangharsh.Model.Video;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -26,10 +29,26 @@ public class PlayerActivity extends AppCompatActivity {
     private ExoPlayer player;
     private PlayerView playerView;
     private String key = "_%66&";
+    private long playbackPosition = 0;
+    private Boolean playWhenReady = true;
+    private int currentWindow;
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (player != null) {
+            player.setPlayWhenReady(false);
+        }
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_player);
         videoInfo = new Gson().fromJson(getIntent().getStringExtra("VIDEO"),
                 Video.class);
@@ -43,7 +62,12 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     private void getDataFromLocal(Video videoInfo) {
-        initialisePlayer(myPref.getString(videoInfo.getId()+"AbsPath", null));
+        String path = myPref.getString(videoInfo.getId()+"AbsPath", null);
+        if (path == null || path.isEmpty()){
+            getDataFromDB(videoInfo);
+        } else {
+            initialisePlayer(path);
+        }
     }
 
     private void getDataFromDB(Video videoInfo) {
@@ -68,6 +92,12 @@ public class PlayerActivity extends AppCompatActivity {
                 });
     }
 
+    @Override
+    protected void onDestroy() {
+        releasePlayer();
+        super.onDestroy();
+    }
+
     private void initialisePlayer(String url){
             playerView = findViewById(R.id.video_view);
             player = new SimpleExoPlayer.Builder(this).build();
@@ -78,6 +108,14 @@ public class PlayerActivity extends AppCompatActivity {
         player.prepare(source);
     }
 
+    @Override
+    protected void onPostResume() {
+        super.onPostResume();
+        if (player!=null) {
+            player.setPlayWhenReady(true);
+        }
+    }
+
     private MediaSource buildMediaSource(Uri uri) {
         return new ProgressiveMediaSource.Factory(
                 new DefaultDataSourceFactory(this, "exoplayer-sangharsh")
@@ -86,9 +124,9 @@ public class PlayerActivity extends AppCompatActivity {
 
     private void releasePlayer(){
             if (player != null) {
-//                playbackPosition = player.getCurrentPosition()
-//                currentWindow = player.getCurrentWindowIndex()
-//                playWhenReady = player.getPlayWhenReady()
+                playbackPosition = player.getCurrentPosition();
+                currentWindow = player.getCurrentWindowIndex();
+                playWhenReady = player.getPlayWhenReady();
                 player.release();
                 player = null;
             }
