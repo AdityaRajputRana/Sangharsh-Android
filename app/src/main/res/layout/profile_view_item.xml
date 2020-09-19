@@ -5,13 +5,13 @@
     android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
     android:padding="8dp"
-    android:layout_marginTop="4dp"
+    android:layout_marginTop="6dp"
     android:layout_height="wrap_content">
 
     <ImageView
         android:id="@+id/forwardImg"
-        android:layout_width="28dp"
-        android:layout_height="28dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -19,8 +19,8 @@
 
     <ImageView
         android:id="@+id/iconImgView"
-        android:layout_width="28dp"
-        android:layout_height="28dp"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -32,8 +32,9 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:text="Log out"
-        android:textColor="#272727"
+        android:textColor="@color/gray_text"
         android:textSize="18sp"
+        android:fontFamily="@font/gilroy_light"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/forwardImg"
         app:layout_constraintStart_toEndOf="@+id/iconImgView"

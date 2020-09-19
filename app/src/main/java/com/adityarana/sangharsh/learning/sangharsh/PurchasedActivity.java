@@ -33,8 +33,6 @@ public class PurchasedActivity extends AppCompatActivity implements HomeRecycler
         ArrayList<HomeCategory> categories = new Gson().fromJson(getIntent().getStringExtra("PURCHASED_CATS"), new TypeToken<ArrayList<HomeCategory>>(){}.getType());
         ArrayList<String> purchased = new Gson().fromJson(getIntent().getStringExtra("PURCHASED_COURSES"), new TypeToken<ArrayList<String>>(){}.getType());
         //Setting RecyclerView
-        Log.i("Categories", categories.toString());
-        Log.i("Purchased", purchased.toString());
         HomeRecyclerViewAdapter adapter = new HomeRecyclerViewAdapter(categories, this,
                 this, purchased);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
@@ -49,6 +47,7 @@ public class PurchasedActivity extends AppCompatActivity implements HomeRecycler
     public void onClick(HomeCategory category) {
         Intent intent = new Intent(this, CategoryActivity.class);
         intent.putExtra("HOME_CATEGORY", new Gson().toJson(category));
+        intent.putExtra("PURCHASED", true);
         startActivity(intent);
     }
 }

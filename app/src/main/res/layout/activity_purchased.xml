@@ -24,10 +24,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"
+        android:fontFamily="@font/gilroy_extrabold"
         app:layout_constraintTop_toTopOf="parent"
-        android:textSize="32sp"
+        android:textSize="28sp"
         android:padding="16dp"
         android:textStyle="bold"
+        android:textColor="@color/gray_text"
         android:text="Purchased Courses" />
 
     <androidx.recyclerview.widget.RecyclerView

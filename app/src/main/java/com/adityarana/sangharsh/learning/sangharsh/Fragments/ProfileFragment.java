@@ -1,10 +1,8 @@
 package com.adityarana.sangharsh.learning.sangharsh.Fragments;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -16,8 +14,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.adityarana.sangharsh.learning.sangharsh.HelpActivity;
 import com.adityarana.sangharsh.learning.sangharsh.LoginActivity;
 import com.adityarana.sangharsh.learning.sangharsh.Model.HomeCategory;
 import com.adityarana.sangharsh.learning.sangharsh.PurchasedActivity;
@@ -37,12 +35,14 @@ public class ProfileFragment extends Fragment {
 
     private ArrayList<String> buttonNames = new ArrayList<>(Arrays.asList(
             "Purchased Courses",
-            "Log out"
+            "Log out",
+            "Need Help"
     ));
 
     private ArrayList<Integer> buttonIcons = new ArrayList<>(Arrays.asList(
             R.drawable.ic_outline_purchased_turned_in_24,
-            R.drawable.ic_baseline_exit_to_app_24
+            R.drawable.ic_baseline_exit_to_app_24,
+            R.drawable.ic_baseline_chat_24
     ));
 
     private LinearLayout mLinearLayout;
@@ -103,11 +103,21 @@ public class ProfileFragment extends Fragment {
                 case 1:
                     logOut();
                     break;
+                case 2:
+                    startMessageActivity();
+                    break;
                 default:
                     break;
             }
         }
     };
+
+    private void startMessageActivity() {
+        Intent intent = new Intent(getActivity(), HelpActivity.class);
+        intent.putExtra("CHAT_ID", FirebaseAuth.getInstance().getCurrentUser().getUid());
+        intent.putExtra("NAME", "Sangharsh Support");
+        startActivity(intent);
+    }
 
     private void startPurchased() {
         if(purchasedCats != null){
