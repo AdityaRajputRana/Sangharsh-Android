@@ -24,6 +24,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.adityarana.sangharsh.learning.sangharsh.Adapter.MessageViewAdapter;
+import com.adityarana.sangharsh.learning.sangharsh.Model.Chat;
 import com.adityarana.sangharsh.learning.sangharsh.Model.Message;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -35,6 +36,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.UploadTask;
@@ -43,6 +45,8 @@ import com.squareup.picasso.Picasso;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HelpActivity extends AppCompatActivity implements MessageViewAdapter.Listener {
 
@@ -128,6 +132,32 @@ public class HelpActivity extends AppCompatActivity implements MessageViewAdapte
         Log.i("MessageAct", "SetUp");
     }
 
+    private void addAdminMsg(String lastMsg){
+        Chat chat = new Chat();
+        Map map = new HashMap<String, Object>();
+        map.put("time", ServerValue.TIMESTAMP);
+        chat.setTime(map);
+        chat.setLastMessage(lastMsg);
+        chat.setChatId(getIntent().getStringExtra("CHAT_ID"));
+
+        chat.setChaterPic(user.getDisplayName());
+        chat.setChaterUid(user.getUid());
+        if (user.getDisplayName() == null || user.getDisplayName().isEmpty()){
+            chat.setChaterName(user.getPhoneNumber());
+        } else {
+            chat.setChaterName(user.getDisplayName());
+        }
+
+        chat.setStatus(1);
+
+        FirebaseDatabase.getInstance()
+                .getReference()
+                .child("admin")
+                .child("chats")
+                .child(getIntent().getStringExtra("CHAT_ID")).setValue(chat);
+    }
+
+
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     @TargetApi(21)
@@ -167,7 +197,12 @@ public class HelpActivity extends AppCompatActivity implements MessageViewAdapte
         message.setAttachments(uri.toString());
         message.setContent("");
 
-        reference.push().setValue(message);
+        reference.push().setValue(message).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                addAdminMsg("Photo");
+            }
+        });
     }
 
     private void changeProgress(Long trans, Long total) {
@@ -183,7 +218,12 @@ public class HelpActivity extends AppCompatActivity implements MessageViewAdapte
             final String mes = editText.getText().toString();
             message.setContent(mes);
 
-            reference.push().setValue(message);
+            reference.push().setValue(message).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    addAdminMsg(message.getContent());
+                }
+            });
             editText.setText("");
         }
     }
