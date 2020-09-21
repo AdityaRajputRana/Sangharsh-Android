@@ -5,7 +5,7 @@ import com.google.firebase.firestore.PropertyName;
 import java.util.ArrayList;
 
 public class User {
-    String name, photoUrl, uid;
+    String uid;
     ArrayList<String> purchasedCourses;
 
     public ArrayList<String> getPurchasedCourses() {
@@ -16,27 +16,9 @@ public class User {
         this.purchasedCourses = purchasedCourses;
     }
 
-    public User(String name, String photoUrl, String uid, ArrayList<String> purchasedCourses) {
-        this.name = name;
-        this.photoUrl = photoUrl;
+    public User(String uid, ArrayList<String> purchasedCourses) {
         this.uid = uid;
         this.purchasedCourses = purchasedCourses;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getPhotoUrl() {
-        return photoUrl;
-    }
-
-    public void setPhotoUrl(String photoUrl) {
-        this.photoUrl = photoUrl;
     }
 
     public String getUid() {

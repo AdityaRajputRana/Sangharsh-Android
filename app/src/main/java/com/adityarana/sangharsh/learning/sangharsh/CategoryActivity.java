@@ -208,6 +208,7 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
                     User user = new User();
                     ArrayList<String> purchased = new ArrayList<String>();
                     purchased.add(homeCategory.getId());
+                    user.setPurchasedCourses(purchased);
                     user.setUid(mUser.getUid());
                     FirebaseFirestore.getInstance()
                             .collection("Users")

@@ -82,8 +82,6 @@ public class MainActivity extends AppCompatActivity implements BannerFragment.Li
                                 Log.i("Purchased", "These are null");
                                 purchased = mUser.getPurchasedCourses();
                             } else {
-                                Log.i("Purchased", "These are not null" + String.valueOf(mUser.
-                                        getPurchasedCourses().size()));
                                 purchased = new ArrayList<String>();
                             }
                             if (homeDocument != null && toSetUp) {
