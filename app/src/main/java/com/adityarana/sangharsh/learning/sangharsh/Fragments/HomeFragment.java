@@ -39,6 +39,7 @@ public class HomeFragment extends Fragment implements HomeRecyclerViewAdapter.Li
     private TextView availTxt;
     private ArrayList<Banner> banners;
     private ArrayList<String> purchased;
+    private HomeRecyclerViewAdapter adapter;
 
 
     public HomeFragment() {
@@ -49,9 +50,13 @@ public class HomeFragment extends Fragment implements HomeRecyclerViewAdapter.Li
         return fragment;
     }
 
+    public void updatePurchased(ArrayList<String> newPurchased){
+        this.purchased = newPurchased;
+        adapter.notifyDataSetChanged();
+    }
     public void setHome(HomeDocument homeDocument, ArrayList<String> purchased){
         this.purchased = purchased;
-        HomeRecyclerViewAdapter adapter = new HomeRecyclerViewAdapter(homeDocument.getCourses(), getActivity(),
+        adapter = new HomeRecyclerViewAdapter(homeDocument.getCourses(), getActivity(),
                 this, purchased);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         mrecyclerView.setAdapter(adapter);

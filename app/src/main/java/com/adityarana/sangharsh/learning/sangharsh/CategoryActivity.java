@@ -11,6 +11,7 @@ import retrofit2.Response;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.adityarana.sangharsh.learning.sangharsh.Adapter.CategoryRecyclerViewAdpter;
+import com.adityarana.sangharsh.learning.sangharsh.Model.User;
 import com.adityarana.sangharsh.learning.sangharsh.Tools.OrderRepository;
 import com.adityarana.sangharsh.learning.sangharsh.Model.Category;
 import com.adityarana.sangharsh.learning.sangharsh.Model.HomeCategory;
@@ -28,6 +30,7 @@ import com.adityarana.sangharsh.learning.sangharsh.Model.SubCategory;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -36,6 +39,8 @@ import com.razorpay.Checkout;
 import com.razorpay.PaymentResultListener;
 
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 public class CategoryActivity extends AppCompatActivity implements CategoryRecyclerViewAdpter.Listener, PaymentResultListener {
 
@@ -191,12 +196,43 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
         .addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
-                progressBar.setVisibility(View.GONE);
-                buyNowBtn.setVisibility(View.GONE);
-                isPurchased = true;
+
+                if (task.isSuccessful()){
+                    progressBar.setVisibility(View.GONE);
+                    buyNowBtn.setVisibility(View.GONE);
+                    isPurchased = true;
+                    CategoryActivity.this.getSharedPreferences("MY_PREF", MODE_PRIVATE).edit()
+                            .putString("PURCHASED_NOW", homeCategory.getId()).apply();
+                } else {
+                    FirebaseUser mUser = FirebaseAuth.getInstance().getCurrentUser();
+                    User user = new User();
+                    ArrayList<String> purchased = new ArrayList<String>();
+                    purchased.add(homeCategory.getId());
+                    user.setUid(mUser.getUid());
+                    FirebaseFirestore.getInstance()
+                            .collection("Users")
+                            .document(user.getUid())
+                            .set(user)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> newTask) {
+                                    if (newTask.isSuccessful()){
+                                        progressBar.setVisibility(View.GONE);
+                                        buyNowBtn.setVisibility(View.GONE);
+                                        isPurchased = true;
+                                        CategoryActivity.this.getSharedPreferences("MY_PREF", MODE_PRIVATE).edit()
+                                                .putString("PURCHASED_NOW", homeCategory.getId()).apply();
+                                    } else {
+                                        Toast.makeText(CategoryActivity.this, "Some Error Occured", Toast.LENGTH_SHORT).show();
+                                    }
+                                }
+                            });
+                }
             }
         });
     }
+
+
 
     @Override
     public void onPaymentError(int i, String s) {

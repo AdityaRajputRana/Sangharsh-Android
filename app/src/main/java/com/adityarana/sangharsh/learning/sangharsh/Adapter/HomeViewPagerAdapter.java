@@ -51,4 +51,8 @@ public class HomeViewPagerAdapter extends FragmentPagerAdapter {
         profileFrag.setPurchasedCourses(home.getCourses(), purchased);
     }
 
+    public void updatePurchased( ArrayList<String> purchased){
+        homeFrag.updatePurchased(purchased);
+    }
+
 }

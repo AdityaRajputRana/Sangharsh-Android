@@ -106,6 +106,18 @@ public class MainActivity extends AppCompatActivity implements BannerFragment.Li
     }
 
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        String cat  = MainActivity.this.getSharedPreferences("MY_PREF", MODE_PRIVATE).getString("PURCHASED_NOW", null);
+        if (cat != null && !cat.isEmpty()){
+            MainActivity.this.getSharedPreferences("MY_PREF", MODE_PRIVATE).edit()
+                    .putString("PURCHASED_NOW", null).apply();
+            purchased.add(cat);
+            viewPagerAdapter.updatePurchased(purchased);
+        }
+    }
+
     private void setUpViewPager() {
         HomeViewPager viewPager;
         viewPager = findViewById(R.id.viewPager);
@@ -121,6 +133,7 @@ public class MainActivity extends AppCompatActivity implements BannerFragment.Li
                 return false;
             }
         });
+
 
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
