@@ -140,11 +140,12 @@ public class HelpActivity extends AppCompatActivity implements MessageViewAdapte
         chat.setLastMessage(lastMsg);
         chat.setChatId(getIntent().getStringExtra("CHAT_ID"));
 
-        chat.setChaterPic(user.getDisplayName());
+
         chat.setChaterUid(user.getUid());
         if (user.getDisplayName() == null || user.getDisplayName().isEmpty()){
             chat.setChaterName(user.getPhoneNumber());
         } else {
+            chat.setChaterPic(user.getDisplayName());
             chat.setChaterName(user.getDisplayName());
         }
 

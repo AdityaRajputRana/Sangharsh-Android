@@ -3,12 +3,19 @@ package com.adityarana.sangharsh.learning.sangharsh;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.Html;
 import android.text.InputType;
@@ -21,6 +28,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.adityarana.sangharsh.learning.sangharsh.Model.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -39,7 +47,10 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.auth.PhoneAuthProvider.OnVerificationStateChangedCallbacks;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class LoginActivity extends AppCompatActivity {
@@ -109,7 +120,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -141,7 +151,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void firebaseAuthWithGoogle(String idToken) {
-        if (mAuth == null){mAuth = FirebaseAuth.getInstance();}
+        if (mAuth == null) {
+            mAuth = FirebaseAuth.getInstance();
+        }
 
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
         mAuth.signInWithCredential(credential)
@@ -150,18 +162,16 @@ public class LoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         progressBar.setVisibility(View.GONE);
                         if (task.isSuccessful()) {
-                            FirebaseUser user = mAuth.getCurrentUser();
-                            updateUI(user);
+                            checkNewUSer(task);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("Firebase Sign In", "signInWithCredential:failure", task.getException());
-                            Snackbar.make((ConstraintLayout)findViewById(R.id.mainLayout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make((ConstraintLayout) findViewById(R.id.mainLayout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
                             updateUI(null);
                         }
                     }
                 });
     }
-
 
 
     private void setPhoneLogin() {
@@ -181,10 +191,10 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void afterTextChanged(Editable editable) {
                 int charLimit = 10;
-                if (isOtpSend){
+                if (isOtpSend) {
                     charLimit = 6;
                 }
-                if(phoneEditTxt.getText().toString().length() != charLimit){
+                if (phoneEditTxt.getText().toString().length() != charLimit) {
                     continueBtn.setEnabled(false);
                     continueBtn.setBackground(LoginActivity.this.getResources().getDrawable(R.drawable.btn_primary_dis_bg));
                 } else {
@@ -199,7 +209,7 @@ public class LoginActivity extends AppCompatActivity {
                 phoneEditTxt.setEnabled(false);
                 continueBtn.setEnabled(false);
                 progressBar.setVisibility(View.VISIBLE);
-                if (isOtpSend){
+                if (isOtpSend) {
                     verifyOtp();
                 } else {
                     sendOpt();
@@ -228,7 +238,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
-        if (mAuth == null){
+        if (mAuth == null) {
             mAuth = FirebaseAuth.getInstance();
         }
         mAuth.signInWithCredential(credential)
@@ -236,9 +246,7 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Log.d("PhoneAuth", "signInWithCredential:success");
-                            FirebaseUser user = task.getResult().getUser();
-                            updateUI(user);
+                            checkNewUSer(task);
                         } else {
                             Log.w("PhoneAuth", "signInWithCredential:failure", task.getException());
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
@@ -257,6 +265,70 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     }
                 });
+    }
+
+    private void checkNewUSer(Task<AuthResult> task) {
+        FirebaseUser fuser = task.getResult().getUser();
+
+        if (task.getResult().getAdditionalUserInfo().isNewUser()) {
+            User user = new User();
+            user.setUid(task.getResult().getUser().getUid());
+//            final TelephonyManager tm = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
+
+//            final String tmDevice, tmSerial, androidId;
+//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+//                tmDevice = "";
+//                tmSerial = "";
+//            } else {
+//                tmDevice = "" + tm.getDeviceId();
+//                tmSerial = "" + tm.getSimSerialNumber();
+//            }
+            String androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+            user.setLoginUUID(androidId);
+//            UUID deviceUuid = new UUID(androidId.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
+            FirebaseFirestore.getInstance()
+                    .collection("Users")
+                    .document(fuser.getUid())
+                    .set(user)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            updateUI(fuser);
+                        }
+                    });
+        } else {
+            FirebaseFirestore.getInstance()
+                    .collection("Users")
+                    .document(fuser.getUid())
+                    .get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if (task.isSuccessful()) {
+                                User user = task.getResult().toObject(User.class);
+                                String androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+                                if (androidId.equals(user.getLoginUUID())) {
+                                    updateUI(fuser);
+                                } else {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+                                    builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            dialogInterface.dismiss();
+                                        }
+                                    })
+                                            .setCancelable(true)
+                                            .setTitle("Access Denied")
+                                            .setMessage("You are on different device than that with which this account was registered. Please use that same phone or Contact Us")
+                                            .show();
+                                    FirebaseAuth.getInstance().signOut();
+                                }
+                            } else {
+                                Toast.makeText(LoginActivity.this, "Some error occurred", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+        }
     }
 
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallBack = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
