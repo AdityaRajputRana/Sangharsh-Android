@@ -34,7 +34,8 @@ public class BannerPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         if (position < banners.size()){
             BannerFragment fragment = new BannerFragment(banners.get(position)
-            .getImageUrl(), banners.get(position).getRedirectUrl());
+            .getImageUrl(), banners.get(position).getRedirectUrl(), banners.get(position).getCategory(),
+                    banners.get(position).getSubcategory());
             if (!banners.get(position).getImageUrl().isEmpty()){
 //                fragment.setImageView(banners.get(position).getImageUrl());
             }

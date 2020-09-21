@@ -26,7 +26,7 @@ public final class OrderRepository {
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor).build();
 
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://us-central1-sangharshx-dc6ff.cloudfunctions.net")
+                .baseUrl("https://us-central1-sangharsh-the-learning-app.cloudfunctions.net")
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();

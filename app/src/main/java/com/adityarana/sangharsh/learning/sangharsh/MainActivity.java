@@ -8,6 +8,7 @@ import me.ibrahimsn.lib.OnItemReselectedListener;
 import me.ibrahimsn.lib.OnItemSelectedListener;
 import me.ibrahimsn.lib.SmoothBottomBar;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,7 +16,9 @@ import android.view.View;
 
 import com.adityarana.sangharsh.learning.sangharsh.Adapter.HomeViewPagerAdapter;
 import com.adityarana.sangharsh.learning.sangharsh.Customs.HomeViewPager;
+import com.adityarana.sangharsh.learning.sangharsh.Fragments.BannerFragment;
 import com.adityarana.sangharsh.learning.sangharsh.Fragments.HomeFragment;
+import com.adityarana.sangharsh.learning.sangharsh.Model.HomeCategory;
 import com.adityarana.sangharsh.learning.sangharsh.Model.HomeDocument;
 import com.adityarana.sangharsh.learning.sangharsh.Model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,11 +26,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.gson.Gson;
 import com.razorpay.Checkout;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements BannerFragment.Listener {
 
     HomeViewPagerAdapter viewPagerAdapter;
     HomeDocument homeDocument;
@@ -134,5 +138,23 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+
+    @Override
+    public void startCatActivity(String categoryId) {
+        String category = "";
+        for (HomeCategory homeCategory: homeDocument.getCourses()){
+            if (homeCategory.getId() == categoryId){
+                category = new Gson().toJson(homeCategory);
+                break;
+            }
+        }
+        if (category != null && !category.isEmpty()) {
+            Intent intent = new Intent(this, CategoryActivity.class);
+            intent.putExtra("HOME_CATEGORY", category);
+            intent.putExtra("PURCHASED", purchased.contains(categoryId));
+            startActivity(intent);
+        }
     }
 }

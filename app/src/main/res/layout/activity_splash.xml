@@ -7,16 +7,29 @@
     android:background="@color/whiteBg"
     tools:context=".SplashActivity">
 
-
     <ImageView
         android:id="@+id/logoView"
+        android:layout_width="0dp"
+        android:layout_height="128dp"
+        android:scaleType="centerInside"
+        android:layout_marginStart="64dp"
+        android:layout_marginEnd="64dp"
+        android:src="@mipmap/ic_launcher"
+        android:layout_marginTop="32dp"
+        app:layout_constraintBottom_toTopOf="@id/imaageView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageView
+        android:id="@+id/imaageView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:scaleType="centerInside"
         android:layout_marginStart="64dp"
         android:layout_marginEnd="64dp"
         android:src="@drawable/ic_splashimg"
-        android:layout_marginBottom="96dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

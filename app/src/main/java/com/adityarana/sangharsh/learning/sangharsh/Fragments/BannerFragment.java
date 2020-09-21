@@ -20,10 +20,20 @@ import com.squareup.picasso.Picasso;
 public class BannerFragment extends Fragment {
     String url;
     String redirectUrl;
+    String category;
+    String subcategory;
+    Listener listener;
 
-    public BannerFragment(String imgUrl, String redirectUrl) {
+    public interface Listener{
+        void startCatActivity(String category);
+    }
+
+    public BannerFragment(String imgUrl, String redirectUrl, String category, String subcategory) {
         this.url = imgUrl;
         this.redirectUrl = redirectUrl;
+        this.category = category;
+        this.subcategory = subcategory;
+        listener = (Listener) getActivity();
         // Required empty public constructor
     }
 
@@ -40,15 +50,24 @@ public class BannerFragment extends Fragment {
                 .load(url)
                 .into(imageView);
 
-        if (redirectUrl != null && !redirectUrl.isEmpty()){
+        if (category != null && !category.isEmpty()) {
             view.findViewById(R.id.cardView).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent i = new Intent(Intent.ACTION_VIEW);
-                    i.setData(Uri.parse(redirectUrl));
-                    startActivity(i);
+                        listener.startCatActivity(category);
                 }
             });
+
+            if (redirectUrl != null && !redirectUrl.isEmpty()) {
+                view.findViewById(R.id.cardView).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse(redirectUrl));
+                        startActivity(i);
+                    }
+                });
+            }
         }
     }
 
