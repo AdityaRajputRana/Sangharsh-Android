@@ -29,7 +29,7 @@ public class Utils {
     }
 
 
-    public void downloadVid(Video videoInfo, Context context) {
+    public void downloadVid(Video videoInfo, Context context, Listener listener) {
         Log.i("Info", "Starting Download");
         try {
 
@@ -61,8 +61,8 @@ public class Utils {
                                         .putString(videoInfo.getId()+"Video", new Gson().toJson(videoInfo))
                                         .putString(videoInfo.getId()+"Path", file.getPath())
                                         .putString(videoInfo.getId()+"AbsPath", file.getAbsolutePath()).commit();
-                                Listener listener = (Listener) context;
-                                listener.downloaded(videoInfo);
+                                Listener mListner = (Listener) listener;
+                                mListner.downloaded(videoInfo);
                             }
                         }
                     });

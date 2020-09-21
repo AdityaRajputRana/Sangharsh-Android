@@ -1,0 +1,85 @@
+{
+  "project_info": {
+    "project_number": "720747905886",
+    "firebase_url": "https://sangharsh-the-learning-app.firebaseio.com",
+    "project_id": "sangharsh-the-learning-app",
+    "storage_bucket": "sangharsh-the-learning-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:720747905886:android:566afadede611d83c8c5cf",
+        "android_client_info": {
+          "package_name": "com.sangharsh.adminpanel_sangharsh"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "720747905886-tsum932c3haq2ktubmhmip1thlfoe46k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sangharsh.adminpanel_sangharsh",
+            "certificate_hash": "984f8da44fb8cbdff5c0e686629ad1f6d2bbb270"
+          }
+        },
+        {
+          "client_id": "720747905886-3pbgr33nn3nnl27on76skbej78f9vpqn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxxLx1thYChv4uhyzeQgKA-4Xy5ikAl_U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "720747905886-3pbgr33nn3nnl27on76skbej78f9vpqn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:720747905886:android:88eccdb40c6df815c8c5cf",
+        "android_client_info": {
+          "package_name": "com.sangharsh.learning"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "720747905886-sbie4ka2gvafc05te5mlfc5kqv9a3rio.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sangharsh.learning",
+            "certificate_hash": "984f8da44fb8cbdff5c0e686629ad1f6d2bbb270"
+          }
+        },
+        {
+          "client_id": "720747905886-3pbgr33nn3nnl27on76skbej78f9vpqn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxxLx1thYChv4uhyzeQgKA-4Xy5ikAl_U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "720747905886-3pbgr33nn3nnl27on76skbej78f9vpqn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

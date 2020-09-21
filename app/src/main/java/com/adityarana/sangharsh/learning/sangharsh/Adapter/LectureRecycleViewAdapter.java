@@ -30,9 +30,14 @@ implements Utils.Listener{
 
     @Override
     public void downloaded(Video video) {
-        ImageView imageView = hashMap.get(video.getId());
-        imageView.setImageResource(R.drawable.ic_baseline_done_24);
-        hashMap.remove(video.getId());
+        try {
+            ImageView imageView = hashMap.get(video.getId());
+            imageView.setImageResource(R.drawable.ic_baseline_done_24);
+            hashMap.remove(video.getId());
+        } catch (Exception e){
+            e.printStackTrace();
+            Toast.makeText(activity, "Please Restart App", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public interface Listener{
@@ -93,7 +98,7 @@ implements Utils.Listener{
     }
 
     private void startDownload(Video video) {
-        new Utils().downloadVid(video, activity);
+        new Utils().downloadVid(video, activity, this);
     }
 
 
