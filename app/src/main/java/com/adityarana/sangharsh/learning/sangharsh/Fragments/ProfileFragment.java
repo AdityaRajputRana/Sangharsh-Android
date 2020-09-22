@@ -132,7 +132,7 @@ public class ProfileFragment extends Fragment {
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             builder.setTitle("No purchased courses found");
-            builder.setMessage("Only the users which have purchased at least 1 course can seek help from ous. This is to prevent bots and spammers from flooding our premium inbox.");
+            builder.setMessage("Only the users which have purchased at least 1 course can seek help from us. This is to prevent bots and spammers from flooding our premium inbox.");
             builder.setPositiveButton("I Understand", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
