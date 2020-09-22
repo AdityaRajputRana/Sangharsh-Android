@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity implements BannerFragment.Li
     protected void onResume() {
         super.onResume();
         String cat  = MainActivity.this.getSharedPreferences("MY_PREF", MODE_PRIVATE).getString("PURCHASED_NOW", null);
-        if (cat != null && !cat.isEmpty()){
+        if (cat != null && !cat.isEmpty() && purchased != null && viewPagerAdapter != null){
             MainActivity.this.getSharedPreferences("MY_PREF", MODE_PRIVATE).edit()
                     .putString("PURCHASED_NOW", null).apply();
             purchased.add(cat);
