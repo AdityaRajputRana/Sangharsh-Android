@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-
 import com.adityarana.sangharsh.learning.sangharsh.Model.SubCategory;
+import com.adityarana.sangharsh.learning.sangharsh.Model.Topic;
 import com.adityarana.sangharsh.learning.sangharsh.R;
 
 import java.util.ArrayList;
@@ -17,9 +17,9 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
-public class CategoryRecyclerViewAdpter extends RecyclerView.Adapter<CategoryRecyclerViewAdpter.MyViewHolder> {
+public class TopicsRVAdapter extends RecyclerView.Adapter<TopicsRVAdapter.MyViewHolder> {
 
-    private ArrayList<SubCategory> categories;
+    private ArrayList<Topic> topics;
     private Listener listener;
 
     private int[] colorsLight;
@@ -29,12 +29,11 @@ public class CategoryRecyclerViewAdpter extends RecyclerView.Adapter<CategoryRec
 
 
     public interface Listener{
-        void openLectures(SubCategory subCategory);
-        void showTopics(SubCategory subCategory);
+        void openLectures(Topic topic);
     }
 
-    public CategoryRecyclerViewAdpter(ArrayList<SubCategory> categories, Context context, Listener listener) {
-        this.categories = categories;
+    public TopicsRVAdapter(ArrayList<Topic> topics, Context context, Listener listener) {
+        this.topics = topics;
         this.listener = listener;
 
         this.colorsDark = new int[]{
@@ -60,33 +59,23 @@ public class CategoryRecyclerViewAdpter extends RecyclerView.Adapter<CategoryRec
 
     @NonNull
     @Override
-    public CategoryRecyclerViewAdpter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public TopicsRVAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.home_recyclew_view, parent, false);
-        return new CategoryRecyclerViewAdpter.MyViewHolder(view);
+        return new TopicsRVAdapter.MyViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CategoryRecyclerViewAdpter.MyViewHolder holder, int position) {
-        final SubCategory category = categories.get(position);
-        holder.catName.setText(category.getName());
-        if (category.getTopics() != null && category.getTopics().size() > 0) {
-            holder.subCat.setText(category.getTopics().size() + " Sub-Topics");
-            holder.cardView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    listener.showTopics(category);
-                }
-            });
-        } else {
-            holder.subCat.setText(category.getLectures() + " Sub-Lectures");
-            holder.cardView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    listener.openLectures(category);
-                }
-            });
-        }
+    public void onBindViewHolder(@NonNull TopicsRVAdapter.MyViewHolder holder, int position) {
+        final Topic topic = topics.get(position);
+        holder.catName.setText(topic.getName());
+        holder.subCat.setText(topic.getLectures() + " Lectures");
+        holder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.openLectures(topic);
+            }
+        });
 
         int colorIndex = position;
         while (colorIndex>2){
@@ -99,8 +88,8 @@ public class CategoryRecyclerViewAdpter extends RecyclerView.Adapter<CategoryRec
 
     @Override
     public int getItemCount() {
-        if (categories != null){
-            return categories.size();
+        if (topics != null){
+            return topics.size();
         } else {
             return 0;
         }

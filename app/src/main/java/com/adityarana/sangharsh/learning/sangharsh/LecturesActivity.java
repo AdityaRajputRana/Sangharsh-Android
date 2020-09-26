@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.adityarana.sangharsh.learning.sangharsh.Adapter.LectureRecycleViewAdapter;
 import com.adityarana.sangharsh.learning.sangharsh.Model.SubCategory;
+import com.adityarana.sangharsh.learning.sangharsh.Model.Topic;
 import com.adityarana.sangharsh.learning.sangharsh.Model.Video;
 import com.adityarana.sangharsh.learning.sangharsh.Tools.Utils;
 import com.google.gson.Gson;
@@ -31,7 +32,6 @@ public class LecturesActivity extends AppCompatActivity implements LectureRecycl
         TextView titleTxt = findViewById(R.id.titleTxt);
         recyclerView = findViewById(R.id.recyclerView);
 
-        String subCategoryStr = getIntent().getStringExtra("SUB_CATEGORY");
         Boolean isPurchased = false;
         try {
             isPurchased = getIntent().getBooleanExtra("PURCHASED", false);
@@ -39,17 +39,21 @@ public class LecturesActivity extends AppCompatActivity implements LectureRecycl
             e.printStackTrace();
         }
 
-            if (subCategoryStr != null){
-                SubCategory subCategory = new Gson().fromJson(subCategoryStr, SubCategory.class);
-                if (subCategory.getLectures() >= 0){
-                    titleTxt.setText(subCategory.getName());
+        Boolean isTopic = getIntent().getBooleanExtra("IS_TOPIC", false);
+
+        if (isTopic){
+            String topicStr = getIntent().getStringExtra("TOPIC");
+            if (topicStr != null) {
+                Topic topic = new Gson().fromJson(topicStr, Topic.class);
+                if (topic.getLectures() >= 0) {
+                    titleTxt.setText(topic.getName());
                     try {
-                        adapter = new LectureRecycleViewAdapter(subCategory.getVideos(), this,
+                        adapter = new LectureRecycleViewAdapter(topic.getVideos(), this,
                                 isPurchased, this);
                         LinearLayoutManager manager = new LinearLayoutManager(this);
                         recyclerView.setAdapter(adapter);
                         recyclerView.setLayoutManager(manager);
-                    } catch (Exception e){
+                    } catch (Exception e) {
                         e.printStackTrace();
                     }
                 } else {
@@ -58,6 +62,28 @@ public class LecturesActivity extends AppCompatActivity implements LectureRecycl
             } else {
                 titleTxt.setText("Some Error Occured");
             }
+        } else {
+            String subCategoryStr = getIntent().getStringExtra("SUB_CATEGORY");
+            if (subCategoryStr != null) {
+                SubCategory subCategory = new Gson().fromJson(subCategoryStr, SubCategory.class);
+                if (subCategory.getLectures() >= 0) {
+                    titleTxt.setText(subCategory.getName());
+                    try {
+                        adapter = new LectureRecycleViewAdapter(subCategory.getVideos(), this,
+                                isPurchased, this);
+                        LinearLayoutManager manager = new LinearLayoutManager(this);
+                        recyclerView.setAdapter(adapter);
+                        recyclerView.setLayoutManager(manager);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    titleTxt.setText("We will be uploading lectures soon");
+                }
+            } else {
+                titleTxt.setText("Some Error Occured");
+            }
+        }
         }
 
     @Override

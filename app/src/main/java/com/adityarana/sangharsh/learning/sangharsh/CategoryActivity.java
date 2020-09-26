@@ -112,8 +112,6 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
     }
 
     private void requestData() {
-        Log.i("Get Data", "Requesting Data");
-        Log.i("Get Data:ID", homeCategory.getId());
         FirebaseFirestore.getInstance()
                 .collection("Categories")
                 .document(homeCategory.getId())
@@ -181,6 +179,15 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
     @Override
     public void openLectures(SubCategory subCategory) {
         Intent intent = new Intent(this, LecturesActivity.class);
+        intent.putExtra("IS_TOPIC", false);
+        intent.putExtra("SUB_CATEGORY", new Gson().toJson(subCategory));
+        intent.putExtra("PURCHASED", isPurchased);
+        startActivity(intent);
+    }
+
+    @Override
+    public void showTopics(SubCategory subCategory) {
+        Intent intent = new Intent(this, TopicsActivity.class);
         intent.putExtra("SUB_CATEGORY", new Gson().toJson(subCategory));
         intent.putExtra("PURCHASED", isPurchased);
         startActivity(intent);
