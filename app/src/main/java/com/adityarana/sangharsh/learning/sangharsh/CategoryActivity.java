@@ -140,7 +140,7 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
     public void startPayment(OrderResponse response) {
 
         Checkout checkout = new Checkout();
-        checkout.setKeyID("rzp_test_4DOylsb3vNceFP");
+        checkout.setKeyID("rzp_live_r2cS3xBOpMSjm2");
 
         //TODO: Set Logo
         checkout.setImage(R.mipmap.ic_launcher);
@@ -244,7 +244,7 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
 
     @Override
     public void onPaymentError(int i, String s) {
-        Toast.makeText(this, "Test payment failed!" + s, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Your Payment has failed! Please try again. " + s, Toast.LENGTH_SHORT).show();
         progressBar.setVisibility(View.GONE);
         Log.i("paymentError:", s);
     }
