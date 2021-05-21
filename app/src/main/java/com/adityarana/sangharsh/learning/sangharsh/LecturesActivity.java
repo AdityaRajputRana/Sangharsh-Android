@@ -16,6 +16,8 @@ import com.adityarana.sangharsh.learning.sangharsh.Model.SubCategory;
 import com.adityarana.sangharsh.learning.sangharsh.Model.Topic;
 import com.adityarana.sangharsh.learning.sangharsh.Model.Video;
 import com.adityarana.sangharsh.learning.sangharsh.Tools.Utils;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.gson.Gson;
 
 import java.util.HashMap;
@@ -84,6 +86,9 @@ public class LecturesActivity extends AppCompatActivity implements LectureRecycl
                 titleTxt.setText("Some Error Occured");
             }
         }
+        AdView mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
         }
 
     @Override

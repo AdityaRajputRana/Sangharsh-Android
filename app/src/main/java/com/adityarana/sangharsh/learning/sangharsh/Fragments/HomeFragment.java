@@ -26,6 +26,8 @@ import com.adityarana.sangharsh.learning.sangharsh.Model.Banner;
 import com.adityarana.sangharsh.learning.sangharsh.Model.HomeCategory;
 import com.adityarana.sangharsh.learning.sangharsh.Model.HomeDocument;
 import com.adityarana.sangharsh.learning.sangharsh.R;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -109,6 +111,11 @@ public class HomeFragment extends Fragment implements HomeRecyclerViewAdapter.Li
         bannerPager = view.findViewById(R.id.viewPager);
         counterTxt = (TextView) view.findViewById(R.id.counter);
         availTxt = (TextView) view.findViewById(R.id.availableTxt);
+
+        AdView mAdView = view.findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
         return view;
     }
 

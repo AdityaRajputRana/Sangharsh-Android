@@ -4,11 +4,14 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 import jp.wasabeef.picasso.transformations.CropCircleTransformation;
 
+import android.text.Html;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +24,7 @@ import com.adityarana.sangharsh.learning.sangharsh.LoginActivity;
 import com.adityarana.sangharsh.learning.sangharsh.Model.HomeCategory;
 import com.adityarana.sangharsh.learning.sangharsh.PurchasedActivity;
 import com.adityarana.sangharsh.learning.sangharsh.R;
+import com.adityarana.sangharsh.learning.sangharsh.Tools.Constants;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
@@ -37,13 +41,15 @@ public class ProfileFragment extends Fragment {
     private ArrayList<String> buttonNames = new ArrayList<>(Arrays.asList(
             "Purchased Courses",
             "Log out",
-            "Need Help"
+            "Need Help",
+            "Privacy Policy"
     ));
 
     private ArrayList<Integer> buttonIcons = new ArrayList<>(Arrays.asList(
             R.drawable.ic_outline_purchased_turned_in_24,
             R.drawable.ic_baseline_exit_to_app_24,
-            R.drawable.ic_baseline_chat_24
+            R.drawable.ic_baseline_chat_24,
+            R.drawable.ic_outline_policy_24
     ));
 
     private LinearLayout mLinearLayout;
@@ -117,11 +123,29 @@ public class ProfileFragment extends Fragment {
                 case 2:
                     startMessageActivity();
                     break;
+                case 3:
+                    showPrivacyPolicy();
+                    break;
                 default:
                     break;
             }
         }
     };
+
+    private void showPrivacyPolicy() {
+        Spanned text;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            text = Html.fromHtml(new Constants().getPrivacyPolicyHTML(), Html.FROM_HTML_MODE_COMPACT);
+        } else {
+            text = Html.fromHtml(new Constants().getPrivacyPolicyHTML());
+        }
+        new AlertDialog.Builder(getActivity())
+                .setTitle("Privacy Policy")
+                .setMessage(text)
+                .setCancelable(true)
+                .show();
+
+    }
 
     private void startMessageActivity() {
         if (purchasedCats!= null && purchasedCats.size() > 0) {
