@@ -128,7 +128,7 @@ public class HomeFragment extends Fragment implements HomeRecyclerViewAdapter.Li
     }
 
     private void setCounter(int count) {
-        if (banners == null) {
+        if (banners == null || banners.size() <=0) {
             bannerPager.setVisibility(View.GONE);
             counterTxt.setVisibility(View.GONE);
         } else {
@@ -145,6 +145,12 @@ public class HomeFragment extends Fragment implements HomeRecyclerViewAdapter.Li
                 counterTxt.setText(Html.fromHtml(html, Html.FROM_HTML_MODE_COMPACT));
             } else {
                 counterTxt.setText(Html.fromHtml(html));
+            }
+            if (bannerPager.getVisibility() == View.GONE){
+                bannerPager.setVisibility(View.VISIBLE);
+            }
+            if (counterTxt.getVisibility() == View.GONE){
+                counterTxt.setVisibility(View.VISIBLE);
             }
         }
     }

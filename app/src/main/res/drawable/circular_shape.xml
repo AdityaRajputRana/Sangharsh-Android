@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@drawable/ic_baseline_arrow_downward_24"
+        android:bottom="4dp"
+        android:top="4dp"
+        android:start="4dp"
+        android:end="4dp">
+    </item>
+    <item>
+        <shape
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:innerRadiusRatio="2.5"
+            android:shape="ring"
+            android:thickness="0.5dp"
+            android:useLevel="false">
+            <solid android:color="#4E4E4E" />
+        </shape>
+    </item>
+</layer-list>

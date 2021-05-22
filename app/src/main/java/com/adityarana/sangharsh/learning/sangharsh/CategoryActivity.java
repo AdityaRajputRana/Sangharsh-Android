@@ -122,12 +122,14 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
             public void onAdDismissedFullScreenContent() {
                 // Called when fullscreen content is dismissed.
                 Log.d("TAG", "The ad was dismissed.");
+                onBackPressed();
             }
 
             @Override
             public void onAdFailedToShowFullScreenContent(AdError adError) {
                 // Called when fullscreen content failed to show.
                 Log.d("TAG", "The ad failed to show.");
+                onBackPressed();
             }
 
             @Override
@@ -145,8 +147,9 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
     public void onBackPressed() {
         if (mInterstitialAd != null){
             mInterstitialAd.show(this);
+        } else {
+            super.onBackPressed();
         }
-        super.onBackPressed();
     }
 
     private void setBuyBtn() {
