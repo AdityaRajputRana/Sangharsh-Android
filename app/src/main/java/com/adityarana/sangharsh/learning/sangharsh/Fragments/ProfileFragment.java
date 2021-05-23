@@ -21,6 +21,7 @@ import android.widget.TextView;
 
 import com.adityarana.sangharsh.learning.sangharsh.HelpActivity;
 import com.adityarana.sangharsh.learning.sangharsh.LoginActivity;
+import com.adityarana.sangharsh.learning.sangharsh.PhoneAuthActivity;
 import com.adityarana.sangharsh.learning.sangharsh.Model.HomeCategory;
 import com.adityarana.sangharsh.learning.sangharsh.PurchasedActivity;
 import com.adityarana.sangharsh.learning.sangharsh.R;

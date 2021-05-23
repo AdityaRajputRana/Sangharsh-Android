@@ -15,13 +15,16 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".RegisterActivity"></activity>
+        <activity
+            android:name=".LoginActivity"
+            android:theme="@style/MaterialTheme" />
 
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
-            android:value="ca-app-pub-6764809003226506~9017874115"/>
+            android:value="ca-app-pub-6764809003226506~9017874115" />
 
-
-        <activity android:name=".TopicsActivity"></activity>
+        <activity android:name=".TopicsActivity" />
         <activity android:name=".HelpActivity" />
         <activity android:name=".PurchasedActivity" />
         <activity
@@ -30,7 +33,7 @@
         <activity android:name=".LecturesActivity" />
         <activity android:name=".CategoryActivity" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".PhoneAuthActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".SplashActivity"
