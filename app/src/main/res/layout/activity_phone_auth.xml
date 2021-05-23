@@ -82,7 +82,7 @@
         android:layout_marginTop="16dp"
         android:fontFamily="@font/gilroy_extrabold"
         android:text="Login via phone number"
-        android:textColor="@color/black"
+        android:textColor="@color/colorPrimary"
         android:textSize="28sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
