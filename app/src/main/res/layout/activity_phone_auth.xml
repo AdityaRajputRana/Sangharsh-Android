@@ -74,35 +74,6 @@
         android:enabled="false"
         app:layout_constraintTop_toBottomOf="@id/editTextPhone"/>
 
-    <TextView
-        android:id="@+id/text2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:text="OR"
-        android:textColor="@color/bg_dark"
-        android:textAlignment="center"
-        android:textSize="24sp"
-        android:fontFamily="@font/gilroy_extrabold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/googleBtn"
-        android:layout_marginBottom="16dp" />
-
-    <Button
-        android:id="@+id/googleBtn"
-        android:padding="12dp"
-        android:layout_width="0dp"
-        android:background="@drawable/btn_secondary_bg"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/gilroy_extrabold"
-        android:textSize="22sp"
-        android:textColor="@color/colorPrimary"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        android:textAllCaps="false"
-        android:text="@string/login_login_with_google"
-        android:layout_marginBottom="28dp"
-        app:layout_constraintBottom_toTopOf="@id/ppTxt"/>
 
     <TextView
         android:id="@+id/welcome_txt"
@@ -110,7 +81,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:fontFamily="@font/gilroy_extrabold"
-        android:text="Welcome to Sangharsh"
+        android:text="Login via phone number"
         android:textColor="@color/black"
         android:textSize="28sp"
         app:layout_constraintEnd_toEndOf="parent"

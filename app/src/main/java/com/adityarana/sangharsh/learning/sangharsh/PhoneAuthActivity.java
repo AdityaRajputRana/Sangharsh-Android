@@ -56,10 +56,6 @@ public class PhoneAuthActivity extends AppCompatActivity {
     private String mVerificationID;
     PhoneAuthProvider.ForceResendingToken mResendToken;
 
-    private GoogleSignInClient mGoogleSignInClient;
-
-    private int RC_SIGN_IN = 101;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,7 +82,7 @@ public class PhoneAuthActivity extends AppCompatActivity {
 
     private void updateUI(FirebaseUser user) {
         if (user != null) {
-            startActivity(new Intent(PhoneAuthActivity.this, MainActivity.class));
+            setResult(RESULT_OK);
             finish();
         }
     }
@@ -192,19 +188,8 @@ public class PhoneAuthActivity extends AppCompatActivity {
         if (task.getResult().getAdditionalUserInfo().isNewUser()) {
             User user = new User();
             user.setUid(task.getResult().getUser().getUid());
-//            final TelephonyManager tm = (TelephonyManager) getBaseContext().getSystemService(Context.TELEPHONY_SERVICE);
-
-//            final String tmDevice, tmSerial, androidId;
-//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-//                tmDevice = "";
-//                tmSerial = "";
-//            } else {
-//                tmDevice = "" + tm.getDeviceId();
-//                tmSerial = "" + tm.getSimSerialNumber();
-//            }
             String androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
             user.setLoginUUID(androidId);
-//            UUID deviceUuid = new UUID(androidId.hashCode(), ((long)tmDevice.hashCode() << 32) | tmSerial.hashCode());
             FirebaseFirestore.getInstance()
                     .collection("Users")
                     .document(fuser.getUid())
@@ -216,37 +201,7 @@ public class PhoneAuthActivity extends AppCompatActivity {
                         }
                     });
         } else {
-            FirebaseFirestore.getInstance()
-                    .collection("Users")
-                    .document(fuser.getUid())
-                    .get()
-                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                            if (task.isSuccessful()) {
-                                User user = task.getResult().toObject(User.class);
-                                String androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
-                                if (androidId.equals(user.getLoginUUID())) {
-                                    updateUI(fuser);
-                                } else {
-                                    AlertDialog.Builder builder = new AlertDialog.Builder(PhoneAuthActivity.this);
-                                    builder.setPositiveButton("Okay", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                            dialogInterface.dismiss();
-                                        }
-                                    })
-                                            .setCancelable(true)
-                                            .setTitle("Access Denied")
-                                            .setMessage("You are on different device than that with which this account was registered. Please use that same phone or Contact Us")
-                                            .show();
-                                    FirebaseAuth.getInstance().signOut();
-                                }
-                            } else {
-                                Toast.makeText(PhoneAuthActivity.this, "Some error occurred", Toast.LENGTH_SHORT).show();
-                            }
-                        }
-                    });
+            updateUI(fuser);
         }
     }
 
