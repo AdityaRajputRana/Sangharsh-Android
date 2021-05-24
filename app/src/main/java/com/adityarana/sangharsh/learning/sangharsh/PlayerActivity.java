@@ -58,7 +58,8 @@ public class PlayerActivity extends AppCompatActivity {
         } else {
             getDataFromDB(videoInfo);
         }
-
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);
     }
 
     private void getDataFromLocal(Video videoInfo) {
