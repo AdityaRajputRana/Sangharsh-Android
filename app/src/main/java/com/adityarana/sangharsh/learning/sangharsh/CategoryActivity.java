@@ -213,7 +213,6 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
         Checkout checkout = new Checkout();
         checkout.setKeyID("rzp_live_r2cS3xBOpMSjm2");
 
-        //TODO: Set Logo
         checkout.setImage(R.mipmap.ic_launcher);
 
         final Activity activity = this;

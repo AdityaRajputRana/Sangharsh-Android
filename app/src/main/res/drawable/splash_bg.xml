@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:drawable="@android:color/white" />
+    <item android:drawable="@drawable/ic_splashimg"
+        android:height="135dp"
+        android:width="286dp"
+        android:top="200dp"
+        android:gravity="center"/>
+    <item android:drawable="@mipmap/ic_launcher"
+        android:gravity="center"
+        android:height="96dp"
+        android:width="96dp"
+        android:bottom="200dp"/>
+</layer-list>

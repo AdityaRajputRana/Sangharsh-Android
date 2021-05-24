@@ -208,7 +208,6 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void updateUI(FirebaseUser user) {
-        //todo send notice to main activity about new login so that ma can verify devices
         Boolean isGoogleVerified = false;
         Boolean isEmailVerified = false;
         Boolean isPhoneVerified = false;
@@ -227,7 +226,9 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
             if (isEmailVerified || isGoogleVerified || isPhoneVerified) {
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                intent.putExtra("isNewLogin", true);
+                startActivity(intent);
                 finish();
             } else {
                 mAuth.signOut();

@@ -2,17 +2,20 @@ package com.adityarana.sangharsh.learning.sangharsh;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 import me.ibrahimsn.lib.OnItemReselectedListener;
 import me.ibrahimsn.lib.OnItemSelectedListener;
 import me.ibrahimsn.lib.SmoothBottomBar;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.adityarana.sangharsh.learning.sangharsh.Adapter.HomeViewPagerAdapter;
 import com.adityarana.sangharsh.learning.sangharsh.Customs.HomeViewPager;
@@ -24,12 +27,18 @@ import com.adityarana.sangharsh.learning.sangharsh.Model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.gson.Gson;
 import com.razorpay.Checkout;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity implements BannerFragment.Listener {
 
@@ -46,7 +55,94 @@ public class MainActivity extends AppCompatActivity implements BannerFragment.Li
         setUpViewPager();
         getData();
 
+        checkNewLogin();
         Checkout.preload(getApplicationContext());
+    }
+
+    private void checkNewLogin() {
+        if (getIntent().getBooleanExtra("isNewLogin", true)){
+            String androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+            FirebaseDatabase.getInstance()
+                    .getReference("users")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child("currentDevice")
+                    .setValue(androidId);
+            FirebaseDatabase.getInstance().getReference("users")
+                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .child("devices")
+                    .child(androidId)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            if (!snapshot.exists() || snapshot.getValue() == null || snapshot.getValue(Boolean.class).equals(false)){
+                                HashMap<String, Object> updates = new HashMap<String, Object>();
+                                FirebaseDatabase.getInstance().getReference("users")
+                                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                        .child("devices")
+                                        .child(androidId)
+                                        .setValue(true);
+                               incrementNumDevices();
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+
+        }
+    }
+
+    private void incrementNumDevices() {
+        FirebaseDatabase.getInstance().getReference("users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child("numDevices")
+                .setValue(ServerValue.increment(1))
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            checkForExcessDevices();
+                        } else {
+                            incrementNumDevices();
+                            Toast.makeText(MainActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    private void checkForExcessDevices() {
+        FirebaseDatabase.getInstance().getReference("users")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .child("numDevices")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()){
+                            if ( snapshot.getValue(Integer.class) > 4){
+                                new AlertDialog.Builder(MainActivity.this)
+                                        .setCancelable(true)
+                                        .setTitle("Account is monitored")
+                                        .setMessage("We have detected too many devices using this account. Hence we are constantly monitoring this account. " +
+                                                "Note sharing the account and promoting piracy may lead to permanent termination of your account.\n If only you are using it on your own " +
+                                                "devices then you need not to worry.")
+                                        .setPositiveButton("I Understand", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                                            }
+                                        })
+                                        .show();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
     }
 
     private void getData() {
