@@ -9,7 +9,10 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.Html;
+import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +21,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.adityarana.sangharsh.learning.sangharsh.Model.Referral;
 import com.adityarana.sangharsh.learning.sangharsh.Model.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -38,8 +42,15 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -57,6 +68,16 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputLayout emailLayout;
     private TextInputLayout passLayout;
     private Button loginBtn;
+
+    //for referral
+    private TextView infoTxt;
+    private Button continueBtn;
+    private Button skipBtn;
+    private EditText phoneEditTxt;
+
+    private Boolean isNewUserRegistered = false;
+    private boolean referralAwarded = false;
+    private boolean referralUserAdded = false;
 
 
     @Override
@@ -96,7 +117,149 @@ public class LoginActivity extends AppCompatActivity {
         setPhoneAuth();
 
         setEmailLogin();
+
+        setReferral();
     }
+
+    private void setReferral() {
+        skipBtn = findViewById(R.id.skipBtn);
+        continueBtn = findViewById(R.id.continueBtn);
+        phoneEditTxt = findViewById(R.id.editTextPhone);
+
+        phoneEditTxt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                int charLimit = 6;
+                if (phoneEditTxt.getText().toString().length() != charLimit) {
+                    continueBtn.setEnabled(false);
+                    continueBtn.setBackground(LoginActivity.this.getResources().getDrawable(R.drawable.btn_primary_dis_bg));
+                } else {
+                    continueBtn.setBackground(LoginActivity.this.getResources().getDrawable(R.drawable.btn_primary_bg));
+                    continueBtn.setEnabled(true);
+                }
+            }
+        });
+
+    }
+
+    private void showReferralEditText() {
+        enableEverything();
+        findViewById(R.id.referralLayout).setVisibility(View.VISIBLE);
+        findViewById(R.id.mainLayout).setVisibility(View.GONE);
+
+        Button skipBtn = findViewById(R.id.skipBtn);
+        skipBtn.setVisibility(View.VISIBLE);
+        skipBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                referralAwarded = true;
+                referralUserAdded = true;
+                updateUI(FirebaseAuth.getInstance().getCurrentUser());
+            }
+        });
+
+        continueBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (phoneEditTxt.getText() != null && !phoneEditTxt.getText().toString().isEmpty()){
+                    verifyReferralId();
+                    disableEverything();
+                }
+            }
+        });
+    }
+
+    private void verifyReferralId() {
+
+        Log.i("MyLogs", "Verifying Now");
+
+        FirebaseDatabase.getInstance()
+                .getReference("referrals")
+                .child(phoneEditTxt.getText().toString().toUpperCase())
+                .child("exists")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists() && snapshot.getValue() != null && snapshot.getValue(Boolean.class)){
+                            startSignUp();
+                        } else {
+                            enableEverything();
+                            phoneEditTxt.setError("This referral code does not exists");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        enableEverything();
+                        Toast.makeText(LoginActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+    private void startSignUp() {
+        addReferral();
+        addReferredUser();
+    }
+
+    private void addReferredUser() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        User mUser = new User();
+        mUser.setUid(user.getUid());
+        mUser.setReferredBy(phoneEditTxt.getText().toString().toUpperCase());
+        String androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+        mUser.setLoginUUID(androidId);
+        FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(user.getUid())
+                .setValue(mUser)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        referralUserAdded = true;
+                        if (referralAwarded && isNewUserRegistered){
+                            updateUI(user);
+                        }
+                    }
+                });
+    }
+
+
+    private void addReferral() {
+        FirebaseUser user = mAuth.getCurrentUser();
+
+        Referral referral = new Referral();
+        referral.setDetails(user.getDisplayName());
+        referral.setPurchaseMade(false);
+        HashMap<String, Object> map = new HashMap<String, Object>();
+        map.put("timestamp", ServerValue.TIMESTAMP);
+        referral.setJoinedOn(map);
+
+        FirebaseDatabase.getInstance()
+                .getReference("referrals")
+                .child(phoneEditTxt.getText().toString().toUpperCase())
+                .child(user.getUid())
+                .setValue(referral)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        referralAwarded = true;
+                        if (referralUserAdded && isNewUserRegistered){
+                            updateUI(user);
+                        }
+                    }
+                });
+    }
+
 
     private void setEmailLogin() {
         emailEt = findViewById(R.id.emailET);
@@ -136,6 +299,9 @@ public class LoginActivity extends AppCompatActivity {
         emailLayout.setEnabled(false);
         googleBtn.setEnabled(false);
         progressBar.setVisibility(View.VISIBLE);
+        continueBtn.setEnabled(false);
+        skipBtn.setEnabled(false);
+        phoneEditTxt.setEnabled(false);
     }
 
     private void enableEverything() {
@@ -144,6 +310,9 @@ public class LoginActivity extends AppCompatActivity {
         passLayout.setEnabled(true);
         emailLayout.setEnabled(true);
         googleBtn.setEnabled(true);
+        continueBtn.setEnabled(true);
+        skipBtn.setEnabled(true);
+        phoneEditTxt.setEnabled(true);
         progressBar.setVisibility(View.GONE);
     }
 
@@ -226,10 +395,12 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
             if (isEmailVerified || isGoogleVerified || isPhoneVerified) {
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                intent.putExtra("isNewLogin", true);
-                startActivity(intent);
-                finish();
+                if (user != null && isNewUserRegistered && referralAwarded && referralUserAdded) {
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra("isNewLogin", true);
+                    startActivity(intent);
+                    finish();
+                }
             } else {
                 mAuth.signOut();
                 enableEverything();
@@ -308,6 +479,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if (task.getResult().getAdditionalUserInfo().isNewUser()) {
             User user = new User();
+            showReferralEditText();
             user.setUid(task.getResult().getUser().getUid());
             String androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
             user.setLoginUUID(androidId);
@@ -318,10 +490,14 @@ public class LoginActivity extends AppCompatActivity {
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
+                            isNewUserRegistered = true;
                             updateUI(fuser);
                         }
                     });
         } else {
+            isNewUserRegistered = true;
+            referralAwarded = true;
+            referralUserAdded = true;
             updateUI(fuser);
         }
     }
