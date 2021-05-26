@@ -81,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
 
 
         TextView registerTxt = findViewById(R.id.registerTxt);
-        registerTxt.setText(Html.fromHtml("Don't have a account? <font color=#2948FF>Register here</font>"));
+        registerTxt.setText(Html.fromHtml("Don't have a account?<b> <font color=#2948FF>Register here</font> </b> "));
 
 
         registerTxt.setOnClickListener(new View.OnClickListener() {

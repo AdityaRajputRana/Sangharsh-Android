@@ -11,6 +11,7 @@ import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
 import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthProvider;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -37,6 +38,13 @@ public class SplashActivity extends AppCompatActivity {
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
+        if (user != null){
+            if (user.getProviderData().get(0).getProviderId().equals(FirebaseAuthProvider.PROVIDER_ID)){
+                user.delete();
+                FirebaseAuth.getInstance().signOut();
+                user = null;
+            }
+        }
         if (user != null){
             FirebaseDatabase.getInstance().getReference("users")
                     .child(user.getUid())

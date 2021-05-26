@@ -5,6 +5,33 @@ import com.google.firebase.firestore.PropertyName;
 import java.util.ArrayList;
 
 public class User {
+
+    public User(String referralId, String referredBy, String uid, String loginUUID, ArrayList<String> purchasedCourses) {
+        this.referralId = referralId;
+        this.referredBy = referredBy;
+        this.uid = uid;
+        this.loginUUID = loginUUID;
+        this.purchasedCourses = purchasedCourses;
+    }
+
+    public String getReferralId() {
+        return referralId;
+    }
+
+    public void setReferralId(String referralId) {
+        this.referralId = referralId;
+    }
+
+    public String getReferredBy() {
+        return referredBy;
+    }
+
+    public void setReferredBy(String referredBy) {
+        this.referredBy = referredBy;
+    }
+
+    String referralId;
+    String referredBy;
     String uid;
 
     public User(String uid, String loginUUID, ArrayList<String> purchasedCourses) {

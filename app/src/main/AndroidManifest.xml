@@ -32,6 +32,9 @@
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="ca-app-pub-6764809003226506~9017874115" />
+        <meta-data
+            android:name="preloaded_fonts"
+            android:resource="@array/preloaded_fonts" />
 
         <activity android:name=".TopicsActivity" />
         <activity android:name=".HelpActivity" />
