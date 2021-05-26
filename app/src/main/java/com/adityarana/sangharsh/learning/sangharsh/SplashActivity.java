@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 
 import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.ads.initialization.InitializationStatus;
@@ -13,6 +14,8 @@ import com.google.android.gms.ads.initialization.OnInitializationCompleteListene
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthProvider;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.auth.UserInfo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -39,7 +42,15 @@ public class SplashActivity extends AppCompatActivity {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
         if (user != null){
-            if (user.getProviderData().get(0).getProviderId().equals(FirebaseAuthProvider.PROVIDER_ID)){
+            Log.i("Auth", user.getProviderData().get(0).getProviderId());
+            Log.i("Auth", FirebaseAuthProvider.PROVIDER_ID);
+            Boolean isReallyLoggedIn = false;
+            for (UserInfo x : user.getProviderData()) {
+                if (!x.getProviderId().equals(FirebaseAuthProvider.PROVIDER_ID)) {
+                    isReallyLoggedIn = true;
+                }
+                }
+            if (!isReallyLoggedIn){
                 user.delete();
                 FirebaseAuth.getInstance().signOut();
                 user = null;

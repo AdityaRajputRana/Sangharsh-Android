@@ -25,6 +25,7 @@ import com.adityarana.sangharsh.learning.sangharsh.PhoneAuthActivity;
 import com.adityarana.sangharsh.learning.sangharsh.Model.HomeCategory;
 import com.adityarana.sangharsh.learning.sangharsh.PurchasedActivity;
 import com.adityarana.sangharsh.learning.sangharsh.R;
+import com.adityarana.sangharsh.learning.sangharsh.ReferActivity;
 import com.adityarana.sangharsh.learning.sangharsh.Tools.Constants;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -43,6 +44,7 @@ public class ProfileFragment extends Fragment {
             "Purchased Courses",
             "Log out",
             "Need Help",
+            "Refer and Earn",
             "Privacy Policy"
     ));
 
@@ -50,6 +52,7 @@ public class ProfileFragment extends Fragment {
             R.drawable.ic_outline_purchased_turned_in_24,
             R.drawable.ic_baseline_exit_to_app_24,
             R.drawable.ic_baseline_chat_24,
+            R.drawable.ic_baseline_share_24,
             R.drawable.ic_outline_policy_24
     ));
 
@@ -125,6 +128,9 @@ public class ProfileFragment extends Fragment {
                     startMessageActivity();
                     break;
                 case 3:
+                    startReferralActivity();
+                    break;
+                case 4:
                     showPrivacyPolicy();
                     break;
                 default:
@@ -132,6 +138,10 @@ public class ProfileFragment extends Fragment {
             }
         }
     };
+
+    private void startReferralActivity() {
+        startActivity(new Intent(getActivity(), ReferActivity.class));
+    }
 
     private void showPrivacyPolicy() {
         Spanned text;
@@ -196,6 +206,7 @@ public class ProfileFragment extends Fragment {
         auth.signOut();
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         getActivity().getSharedPreferences("VIDEO_PREF", Context.MODE_PRIVATE).edit().clear().apply();
+        getActivity().getSharedPreferences("MyPref", Context.MODE_PRIVATE).edit().clear().apply();
         startActivity(intent);
         getActivity().finish();
     }

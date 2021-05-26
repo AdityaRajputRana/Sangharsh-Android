@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#f6f6f6"
+    android:animateLayoutChanges="true"
+    tools:context="com.adityarana.sangharsh.learning.sangharsh.ReferActivity">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:paddingTop="16dp"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="28sp"
+                android:layout_marginStart="16dp"
+                android:paddingEnd="16dp"
+                android:fontFamily="@font/gilroy_extrabold"
+                android:id="@+id/header_tv"
+                android:textColor="@color/colorPrimary"
+                android:text="Refer and Earn" />
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:src="@drawable/ic_refer" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:padding="16dp"
+                android:fontFamily="@font/gilroy_light"
+                android:id="@+id/infoTxt"
+                android:textAlignment="center"
+                android:textColor="@color/gray_text"
+                android:text="Earn money by telling everyone about Sangharsh.\nYou will be able to redeem your rewards once your friends makes a purchase" />
+
+            <LinearLayout
+                android:id="@+id/referralLayout"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:id="@+id/codeLayout"
+                    android:layout_width="wrap_content"
+                    android:padding="8dp"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="16dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:gravity="center"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edittext_bg"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/gilroy_light"
+                        android:id="@+id/yourCode"
+                        android:textAlignment="center"
+                        android:textColor="@color/gray_text"
+                        android:text="Your Code" />
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="28sp"
+                        android:fontFamily="@font/gilroy_extrabold"
+                        android:id="@+id/codeTxt"
+                        android:textColor="@color/colorPrimary"
+                        android:text="X0EA4D" />
+
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/shareBtn"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@drawable/btn_primary_bg"
+                    android:text="Share"
+                    android:fontFamily="@font/gilroy_extrabold"
+                    android:textSize="28sp"
+                    android:textAllCaps="false"
+                    android:drawableLeft="@drawable/ic_baseline_share_24"
+                    android:padding="8dp"
+                    android:drawableTint="@android:color/white"
+                    android:textColor="@android:color/white"
+                    app:cornerRadius="15dp"
+                    android:drawablePadding="32dp"
+                    android:layout_marginBottom="16dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <LinearLayout
+                    android:visibility="gone"
+                    android:id="@+id/referredDetailsLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="28sp"
+                        android:layout_marginStart="16dp"
+                        android:paddingEnd="16dp"
+                        android:fontFamily="@font/gilroy_extrabold"
+                        android:id="@+id/subHead"
+                        android:layout_marginTop="16dp"
+                        android:textColor="@color/black"
+                        android:text="Your Referrals" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/recyclerView"
+                        android:padding="16dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/redeemBtn"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginEnd="16dp"
+                        android:background="@drawable/btn_primary_bg"
+                        android:text="Redeem"
+                        android:fontFamily="@font/gilroy_extrabold"
+                        android:textSize="28sp"
+                        android:textAllCaps="false"
+                        android:padding="8dp"
+                        android:textColor="@android:color/white"
+                        app:cornerRadius="15dp"
+                        android:layout_marginBottom="16dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                </LinearLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/processLayout"
+                android:layout_width="match_parent"
+                android:orientation="vertical"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="14sp"
+                    android:padding="16dp"
+                    android:fontFamily="@font/gilroy_light"
+                    android:id="@+id/processTxt"
+                    android:textAlignment="center"
+                    android:textColor="@color/gray_text"
+                    android:text="Please wait while we load your referral id" />
+
+                <ProgressBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/progressBar"
+                    android:layout_gravity="center_horizontal" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
