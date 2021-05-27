@@ -81,6 +81,7 @@
             android:textAllCaps="false"
             android:textSize="24sp"
             android:fontFamily="@font/gilroy_extrabold"
+            android:backgroundTint="@android:color/transparent"
             android:background="@drawable/btn_secondary_bg"
             android:enabled="true"
             android:layout_marginTop="32dp"

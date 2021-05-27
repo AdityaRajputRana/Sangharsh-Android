@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public class Referral {
     String details;
-    HashMap<String, Object> joinedOn;
+    HashMap<String, Object> lastUpdates;
     Boolean purchaseMade;
     String firstPurchase;
     String firstOrderId;
@@ -57,7 +57,7 @@ public class Referral {
 
     public Referral(String details, HashMap<String, Object> joinedOn, Boolean purchaseMade, String firstPurchase, String firstOrderId, String uid, String referralId, String paymentNote, HashMap<String, Object> paymentDetails, HashMap<String, Object> redeemDetails) {
         this.details = details;
-        this.joinedOn = joinedOn;
+        this.lastUpdates = joinedOn;
         this.purchaseMade = purchaseMade;
         this.firstPurchase = firstPurchase;
         this.firstOrderId = firstOrderId;
@@ -76,12 +76,12 @@ public class Referral {
         this.details = details;
     }
 
-    public HashMap<String, Object> getJoinedOn() {
-        return joinedOn;
+    public HashMap<String, Object> getLastUpdates() {
+        return lastUpdates;
     }
 
-    public void setJoinedOn(HashMap<String, Object> joinedOn) {
-        this.joinedOn = joinedOn;
+    public void setLastUpdates(HashMap<String, Object> lastUpdates) {
+        this.lastUpdates = lastUpdates;
     }
 
     public Boolean getPurchaseMade() {
@@ -113,7 +113,7 @@ public class Referral {
 
     public Referral(String details, HashMap<String, Object> joinedOn, Boolean purchaseMade, String firstPurchase, String firstOrderId) {
         this.details = details;
-        this.joinedOn = joinedOn;
+        this.lastUpdates = joinedOn;
         this.purchaseMade = purchaseMade;
         this.firstPurchase = firstPurchase;
         this.firstOrderId = firstOrderId;

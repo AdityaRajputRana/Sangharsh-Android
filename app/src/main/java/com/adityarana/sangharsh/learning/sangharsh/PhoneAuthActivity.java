@@ -317,11 +317,12 @@ public class PhoneAuthActivity extends AppCompatActivity {
         referral.setPurchaseMade(false);
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("timestamp", ServerValue.TIMESTAMP);
-        referral.setJoinedOn(map);
+        referral.setLastUpdates(map);
 
         FirebaseDatabase.getInstance()
                 .getReference("referrals")
                 .child(phoneEditTxt.getText().toString().toUpperCase())
+                .child("referred")
                 .child(user.getUid())
                 .setValue(referral)
                 .addOnCompleteListener(new OnCompleteListener<Void>() {

@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.adityarana.sangharsh.learning.sangharsh.Adapter.CategoryRecyclerViewAdpter;
+import com.adityarana.sangharsh.learning.sangharsh.Model.Referral;
 import com.adityarana.sangharsh.learning.sangharsh.Model.User;
 import com.adityarana.sangharsh.learning.sangharsh.Tools.Constants;
 import com.adityarana.sangharsh.learning.sangharsh.Tools.OrderRepository;
@@ -38,6 +39,11 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -48,6 +54,7 @@ import com.razorpay.PaymentResultListener;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class CategoryActivity extends AppCompatActivity implements CategoryRecyclerViewAdpter.Listener, PaymentResultListener {
 
@@ -61,6 +68,7 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
     private Boolean isPurchased;
 
     private InterstitialAd mInterstitialAd;
+    private String orderId;
 
 
     @Override
@@ -221,7 +229,7 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
 
         try {
             JSONObject options = new JSONObject();
-
+            orderId = response.getId();
             options.put("name", "Sangharsh");
             options.put("description", "Course - " + homeCategory.getName());
             options.put("image", "https://s3.amazonaws.com/rzp-mobile/images/rzp.png");
@@ -295,11 +303,9 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
                                 @Override
                                 public void onComplete(@NonNull Task<Void> newTask) {
                                     if (newTask.isSuccessful()){
-                                        progressBar.setVisibility(View.GONE);
-                                        buyNowBtn.setVisibility(View.GONE);
-                                        isPurchased = true;
                                         CategoryActivity.this.getSharedPreferences("MY_PREF", MODE_PRIVATE).edit()
                                                 .putString("PURCHASED_NOW", homeCategory.getId()).apply();
+                                        checkReferral();
                                     } else {
                                         Toast.makeText(CategoryActivity.this, "Some Error Occured", Toast.LENGTH_SHORT).show();
                                     }
@@ -310,6 +316,80 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
         });
     }
 
+    private void enableEverything() {
+        progressBar.setVisibility(View.GONE);
+        buyNowBtn.setVisibility(View.GONE);
+        isPurchased = true;
+    }
+
+    private void checkReferral() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(user.getUid())
+                .child("referredBy")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists() && snapshot.getValue() != null && !snapshot.getValue(String.class).isEmpty() &&
+                        orderId != null && !orderId.isEmpty()){
+                            rewardReferral(snapshot.getValue(String.class));
+                        } else {
+                            enableEverything();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        enableEverything();
+                        Toast.makeText(CategoryActivity.this, "Something went wrong while rewarding the referral", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void rewardReferral(String referralId) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        Referral referral = new Referral();
+
+        String details = "Referred User UID: "+ user.getUid();
+        if (user.getEmail() != null && !user.getEmail().isEmpty()){
+            details = details + "\nReferred user Email: " + user.getEmail();
+        }
+        if (user.getPhoneNumber() != null && !user.getPhoneNumber().isEmpty()){
+            details = details + "\nReferred user Phone: " + user.getPhoneNumber();
+        }
+        if (user.getPhotoUrl() != null && !user.getPhotoUrl().toString().isEmpty()){
+            details = details + "\nReferred user Photo: " + user.getPhotoUrl().toString();
+        }
+
+        referral.setDetails(details);
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("timestamp", ServerValue.TIMESTAMP);
+        referral.setLastUpdates(map);
+
+        referral.setPurchaseMade(true);
+        referral.setFirstPurchase(homeCategory.getId());
+        referral.setFirstOrderId(orderId);
+        referral.setUid(user.getUid());
+        referral.setReferralId(referralId);
+
+        FirebaseDatabase.getInstance()
+                .getReference("referrals")
+                .child(referralId)
+                .child("referred")
+                .child(user.getUid())
+                .setValue(referral)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        enableEverything();
+                        if (!task.isSuccessful()){
+                            Toast.makeText(CategoryActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
 
 
     @Override
