@@ -7,6 +7,23 @@ public class UserReferral {
     String referralId;
     Boolean exists;
     HashMap<String, Object> referred;
+    PaymentDetails paymentDetails;
+
+    public PaymentDetails getPaymentDetails() {
+        return paymentDetails;
+    }
+
+    public void setPaymentDetails(PaymentDetails paymentDetails) {
+        this.paymentDetails = paymentDetails;
+    }
+
+    public UserReferral(String uid, String referralId, Boolean exists, HashMap<String, Object> referred, PaymentDetails paymentDetails) {
+        this.uid = uid;
+        this.referralId = referralId;
+        this.exists = exists;
+        this.referred = referred;
+        this.paymentDetails = paymentDetails;
+    }
 
     public String getUid() {
         return uid;

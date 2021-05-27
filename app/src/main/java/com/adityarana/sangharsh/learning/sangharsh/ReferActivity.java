@@ -2,6 +2,7 @@ package com.adityarana.sangharsh.learning.sangharsh;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -11,11 +12,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.adityarana.sangharsh.learning.sangharsh.Adapter.ReferralAdapter;
+import com.adityarana.sangharsh.learning.sangharsh.Model.PaymentDetails;
 import com.adityarana.sangharsh.learning.sangharsh.Model.Referral;
 import com.adityarana.sangharsh.learning.sangharsh.Model.UserReferral;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -29,6 +34,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.sql.Ref;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -45,7 +52,40 @@ public class ReferActivity extends AppCompatActivity {
     private Button shareBtn;
 
     private String referId;
-    private Button redeemBtn;
+    private int state = 0;
+
+    private LinearLayout paymentsLayout;
+    private NestedScrollView scrollView;
+
+    private HashMap<String, Referral> mReferrals;
+
+    private ProgressBar progressBar;
+    private Button bankBtn;
+    private Button upiBtn;
+    private Button bankViewBtn;
+    private Button upiViewBtn;
+
+    private EditText nameEt;
+    private EditText upiEt;
+    private EditText ifscEt;
+    private EditText accountNum;
+
+    @Override
+    public void onBackPressed() {
+        switch (state){
+            case 0:
+                super.onBackPressed();
+                break;
+            case 1:
+                scrollView.setVisibility(View.VISIBLE);
+                paymentsLayout.setVisibility(View.GONE);
+                state--;
+                break;
+            default:
+                super.onBackPressed();
+                break;
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +122,8 @@ public class ReferActivity extends AppCompatActivity {
     }
 
     private void loadReferredDetails() {
+        processLayout.setVisibility(View.VISIBLE);
+        processTxt.setText("Loading the list of accounts you referred");
         FirebaseDatabase.getInstance().getReference("referrals")
         .child(referId)
         .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -109,15 +151,241 @@ public class ReferActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-
+                processLayout.setVisibility(View.GONE);
             }
         });
     }
 
     private void showRedeemBtn() {
+        processLayout.setVisibility(View.GONE);
+
+        scrollView = findViewById(R.id.nestedScroll);
+        paymentsLayout = findViewById(R.id.paymentsLayout);
+
+        Button redeem = findViewById(R.id.redeemBtn);
+        redeem.setVisibility(View.VISIBLE);
+        redeem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                scrollView.setVisibility(View.GONE);
+                paymentsLayout.setVisibility(View.VISIBLE);
+                state++;
+                loadPayments();
+            }
+        });
     }
 
+    private void loadPayments() {
+        bankBtn = findViewById(R.id.bankBtn);
+        upiBtn = findViewById(R.id.upiButton);
+        bankViewBtn = findViewById(R.id.bankViewBtn);
+        upiViewBtn = findViewById(R.id.upiViewBtn);
+
+        nameEt = findViewById(R.id.bankName);
+        upiEt = findViewById(R.id.upiId);
+        ifscEt = findViewById(R.id.bankIfsc);
+        accountNum = findViewById(R.id.bankAccount);
+
+        progressBar = findViewById(R.id.myProgressBar);
+
+        upiBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (upiEt.getText() == null || upiEt.getText().toString().isEmpty()){
+                    upiEt.setError("This field is required");
+                } else {
+                    uploadUpi(upiEt.getText().toString());
+                }
+            }
+        });
+
+        bankBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Boolean isAllFilled = true;
+                if (nameEt.getText() == null || nameEt.getText().toString().isEmpty()){
+                    isAllFilled = false;
+                    nameEt.setError("This field is required");
+                }
+
+                if (ifscEt.getText() == null || ifscEt.getText().toString().isEmpty()){
+                    isAllFilled = false;
+                    ifscEt.setError("This field is required");
+                }
+
+                if (accountNum.getText() == null || accountNum.getText().toString().isEmpty()){
+                    isAllFilled = false;
+                    accountNum.setError("This field is required");
+                }
+
+                if (isAllFilled){
+                    uploadDataBank(nameEt.getText().toString(), accountNum.getText().toString(), ifscEt.getText().toString());
+                }
+            }
+        });
+
+        LinearLayout bankLayout = findViewById(R.id.bankLayout);
+        LinearLayout upiLayout = findViewById(R.id.upiLayout);
+
+        bankViewBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                bankLayout.setVisibility(View.VISIBLE);
+                upiLayout.setVisibility(View.GONE);
+                bankViewBtn.setTextColor(ReferActivity.this.getResources().getColor(R.color.white));
+                upiViewBtn.setTextColor(ReferActivity.this.getResources().getColor(R.color.colorPrimary));
+                bankViewBtn.setBackground(ReferActivity.this.getResources().getDrawable(R.drawable.btn_primary_bg));
+                upiViewBtn.setBackground(ReferActivity.this.getResources().getDrawable(R.drawable.btn_secondary_bg));
+            }
+        });
+
+        upiViewBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                upiLayout.setVisibility(View.VISIBLE);
+                bankLayout.setVisibility(View.GONE);
+                upiViewBtn.setTextColor(ReferActivity.this.getResources().getColor(R.color.white));
+                bankViewBtn.setTextColor(ReferActivity.this.getResources().getColor(R.color.colorPrimary));
+                upiViewBtn.setBackground(ReferActivity.this.getResources().getDrawable(R.drawable.btn_primary_bg));
+                bankViewBtn.setBackground(ReferActivity.this.getResources().getDrawable(R.drawable.btn_secondary_bg));
+            }
+        });
+    }
+
+    private void uploadUpi(String upiId) {
+        disable();
+        PaymentDetails details = new PaymentDetails();
+        details.setUpiId(upiId);
+        details.setBankPayment(false);
+
+        HashMap<String, Object> updates = new HashMap<>();
+        Collection<Referral> collection = mReferrals.values();
+        ArrayList<Referral> referrals = new ArrayList<Referral>(collection);
+        for (Referral x: referrals){
+            if (x.getPurchaseMade() != null && x.getPurchaseMade() && (x.getRedeemed() == null || !x.getRedeemed())){
+                mReferrals.get(x.getUid()).setRedeemed(true);
+                updates.put("referrals/" + x.getReferralId() + "/referred/" + x.getUid()
+                        +"/redeemed", true);
+            }
+        }
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user.getDisplayName() != null){
+            updates.put("admin/referrals/" + referId + "/name", user.getDisplayName());
+        }
+
+        if (user.getEmail() != null){
+            updates.put("admin/referrals/" + referId + "/email", user.getEmail());
+
+        }
+
+        if (user.getPhoneNumber() != null){
+            updates.put("admin/referrals/" + referId + "/phone", user.getPhoneNumber());
+
+        }
+        updates.put("admin/referrals/" + referId + "/id", referId);
+
+        updates.put("referrals/" + referId+ "/paymentDetails", details);
+
+        FirebaseDatabase.getInstance().getReference()
+                .updateChildren(updates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            enable();
+                            showReferred(mReferrals);
+                            onBackPressed();
+                            Toast.makeText(ReferActivity.this, "We have registered your request. It will be processed as soon as possible", Toast.LENGTH_LONG).show();
+                        } else {
+                            enable();
+                            Toast.makeText(ReferActivity.this, "Something went wrong!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    private void uploadDataBank(String name, String account, String ifsc) {
+        disable();
+        PaymentDetails details = new PaymentDetails();
+        details.setAccountNumber(account);
+        details.setHolderName(name);
+        details.setIfscCode(ifsc);
+        details.setBankPayment(true);
+
+        HashMap<String, Object> updates = new HashMap<>();
+        Collection<Referral> collection = mReferrals.values();
+        ArrayList<Referral> referrals = new ArrayList<Referral>(collection);
+        for (Referral x: referrals){
+            if (x.getPurchaseMade() != null && x.getPurchaseMade() && (x.getRedeemed() == null || !x.getRedeemed())){
+                mReferrals.get(x.getUid()).setRedeemed(true);
+                updates.put("referrals/" + referId + "/referred/" + x.getUid()
+                +"/redeemed", true);
+            }
+        }
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if (user.getDisplayName() != null){
+            updates.put("admin/referrals/" + referId + "/name", user.getDisplayName());
+        }
+
+        if (user.getEmail() != null){
+            updates.put("admin/referrals/" + referId + "/email", user.getEmail());
+
+        }
+
+        if (user.getPhoneNumber() != null){
+            updates.put("admin/referrals/" + referId + "/phone", user.getPhoneNumber());
+
+        }
+        updates.put("admin/referrals/" + referId + "/id", referId);
+
+        updates.put("referrals/" + referId+ "/paymentDetails", details);
+
+        FirebaseDatabase.getInstance().getReference()
+                .updateChildren(updates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            enable();
+                            showReferred(mReferrals);
+                            onBackPressed();
+                            Toast.makeText(ReferActivity.this, "We have registered your request. It will be processed as soon as possible", Toast.LENGTH_LONG).show();
+                        } else {
+                            enable();
+                            Toast.makeText(ReferActivity.this, "Something went wrong!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    private void disable() {
+        progressBar.setVisibility(View.VISIBLE);
+        bankBtn.setEnabled(false);
+        upiBtn.setEnabled(false);
+        bankViewBtn.setEnabled(false);
+        upiViewBtn.setEnabled(false);
+        ifscEt.setEnabled(false);
+        nameEt.setEnabled(false);
+        accountNum.setEnabled(false);
+        upiEt.setEnabled(false);
+    }
+    private void enable() {
+        progressBar.setVisibility(View.GONE);
+        bankBtn.setEnabled(true);
+        upiBtn.setEnabled(true);
+        bankViewBtn.setEnabled(true);
+        upiViewBtn.setEnabled(true);
+        ifscEt.setEnabled(true);
+        nameEt.setEnabled(true);
+        accountNum.setEnabled(true);
+        upiEt.setEnabled(true);
+    }
+
+
     private void showReferred(HashMap<String, Referral> referrals){
+        mReferrals = referrals;
         findViewById(R.id.referredDetailsLayout).setVisibility(View.VISIBLE);
         ReferralAdapter adapter = new ReferralAdapter(referrals, this);
         recyclerView.setAdapter(adapter);

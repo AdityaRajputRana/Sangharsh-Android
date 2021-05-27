@@ -13,23 +13,23 @@ public class Referral {
     String referralId;
     String paymentNote;
 
-    Boolean isRedeemed;
-    Boolean isPaid;
+    Boolean redeemed;
+    Boolean paid;
 
     public Boolean getRedeemed() {
-        return isRedeemed;
+        return redeemed;
     }
 
     public void setRedeemed(Boolean redeemed) {
-        isRedeemed = redeemed;
+        this.redeemed = redeemed;
     }
 
     public Boolean getPaid() {
-        return isPaid;
+        return paid;
     }
 
     public void setPaid(Boolean paid) {
-        isPaid = paid;
+        this.paid = paid;
     }
 
     String name;
@@ -51,8 +51,8 @@ public class Referral {
         this.uid = uid;
         this.referralId = referralId;
         this.paymentNote = paymentNote;
-        this.isRedeemed = isRedeemed;
-        this.isPaid = isPaid;
+        this.redeemed = isRedeemed;
+        this.paid = isPaid;
         this.name = name;
     }
 
