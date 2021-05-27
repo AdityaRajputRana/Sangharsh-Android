@@ -279,6 +279,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         Referral referral = new Referral();
         referral.setDetails(user.getDisplayName());
+        referral.setName(user.getDisplayName());
         referral.setPurchaseMade(false);
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("timestamp", ServerValue.TIMESTAMP);

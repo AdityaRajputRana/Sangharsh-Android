@@ -362,6 +362,14 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
             details = details + "\nReferred user Photo: " + user.getPhotoUrl().toString();
         }
 
+        if (user.getDisplayName() != null && !user.getDisplayName().isEmpty()){
+            referral.setName(user.getDisplayName());
+        } else if (user.getPhoneNumber() != null && !user.getPhoneNumber().isEmpty()){
+            referral.setName(user.getPhoneNumber());
+        } else if (user.getEmail() != null && !user.getEmail().isEmpty()){
+            referral.setName(user.getEmail());
+        }
+
         referral.setDetails(details);
 
         HashMap<String, Object> map = new HashMap<>();

@@ -12,8 +12,49 @@ public class Referral {
     String uid;
     String referralId;
     String paymentNote;
-    HashMap<String, Object> paymentDetails;
-    HashMap<String, Object> redeemDetails;
+
+    Boolean isRedeemed;
+    Boolean isPaid;
+
+    public Boolean getRedeemed() {
+        return isRedeemed;
+    }
+
+    public void setRedeemed(Boolean redeemed) {
+        isRedeemed = redeemed;
+    }
+
+    public Boolean getPaid() {
+        return isPaid;
+    }
+
+    public void setPaid(Boolean paid) {
+        isPaid = paid;
+    }
+
+    String name;
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Referral(String details, HashMap<String, Object> lastUpdates, Boolean purchaseMade, String firstPurchase, String firstOrderId, String uid, String referralId, String paymentNote, Boolean isRedeemed, Boolean isPaid, String name) {
+        this.details = details;
+        this.lastUpdates = lastUpdates;
+        this.purchaseMade = purchaseMade;
+        this.firstPurchase = firstPurchase;
+        this.firstOrderId = firstOrderId;
+        this.uid = uid;
+        this.referralId = referralId;
+        this.paymentNote = paymentNote;
+        this.isRedeemed = isRedeemed;
+        this.isPaid = isPaid;
+        this.name = name;
+    }
 
     public String getUid() {
         return uid;
@@ -37,35 +78,6 @@ public class Referral {
 
     public void setPaymentNote(String paymentNote) {
         this.paymentNote = paymentNote;
-    }
-
-    public HashMap<String, Object> getPaymentDetails() {
-        return paymentDetails;
-    }
-
-    public void setPaymentDetails(HashMap<String, Object> paymentDetails) {
-        this.paymentDetails = paymentDetails;
-    }
-
-    public HashMap<String, Object> getRedeemDetails() {
-        return redeemDetails;
-    }
-
-    public void setRedeemDetails(HashMap<String, Object> redeemDetails) {
-        this.redeemDetails = redeemDetails;
-    }
-
-    public Referral(String details, HashMap<String, Object> joinedOn, Boolean purchaseMade, String firstPurchase, String firstOrderId, String uid, String referralId, String paymentNote, HashMap<String, Object> paymentDetails, HashMap<String, Object> redeemDetails) {
-        this.details = details;
-        this.lastUpdates = joinedOn;
-        this.purchaseMade = purchaseMade;
-        this.firstPurchase = firstPurchase;
-        this.firstOrderId = firstOrderId;
-        this.uid = uid;
-        this.referralId = referralId;
-        this.paymentNote = paymentNote;
-        this.paymentDetails = paymentDetails;
-        this.redeemDetails = redeemDetails;
     }
 
     public String getDetails() {

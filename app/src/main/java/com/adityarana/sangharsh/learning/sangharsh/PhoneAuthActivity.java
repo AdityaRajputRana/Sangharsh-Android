@@ -318,7 +318,7 @@ public class PhoneAuthActivity extends AppCompatActivity {
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("timestamp", ServerValue.TIMESTAMP);
         referral.setLastUpdates(map);
-
+        referral.setName(user.getPhoneNumber());
         FirebaseDatabase.getInstance()
                 .getReference("referrals")
                 .child(phoneEditTxt.getText().toString().toUpperCase())

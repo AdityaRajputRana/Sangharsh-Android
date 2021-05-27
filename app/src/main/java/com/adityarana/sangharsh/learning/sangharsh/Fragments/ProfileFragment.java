@@ -43,7 +43,7 @@ public class ProfileFragment extends Fragment {
     private ArrayList<String> buttonNames = new ArrayList<>(Arrays.asList(
             "Purchased Courses",
             "Log out",
-            "Need Help",
+            "Doubts Section",
             "Refer and Earn",
             "Privacy Policy"
     ));

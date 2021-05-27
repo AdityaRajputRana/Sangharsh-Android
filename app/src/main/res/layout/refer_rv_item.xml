@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:background="@android:color/white"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="4dp"
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#BF000000"
+        android:id="@+id/nameTxt"
+        android:fontFamily="@font/gilroy_extrabold"
+        android:textSize="18sp"
+        android:text="Aditya Rana" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/detailsTxt"
+        android:fontFamily="@font/gilroy_light"
+        android:textSize="16sp"
+        android:textColor="@color/gray_text"
+        android:text="User is yet to make his first purchase" />
+
+
+
+</LinearLayout>

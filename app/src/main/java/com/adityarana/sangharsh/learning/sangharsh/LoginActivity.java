@@ -244,6 +244,7 @@ public class LoginActivity extends AppCompatActivity {
         HashMap<String, Object> map = new HashMap<String, Object>();
         map.put("timestamp", ServerValue.TIMESTAMP);
         referral.setLastUpdates(map);
+        referral.setName(user.getDisplayName());
 
         FirebaseDatabase.getInstance()
                 .getReference("referrals")
@@ -397,7 +398,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
             if (isEmailVerified || isGoogleVerified || isPhoneVerified) {
-                if (user != null && isNewUserRegistered && referralAwarded && referralUserAdded) {
+                if ((isNewUserRegistered && referralAwarded && referralUserAdded) || isEmailVerified) {
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     intent.putExtra("isNewLogin", true);
                     startActivity(intent);
@@ -444,6 +445,9 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         if (requestCode == 902 && resultCode == RESULT_OK){
+            isNewUserRegistered =true;
+            referralAwarded = true;
+            referralUserAdded = true;
             updateUI(FirebaseAuth.getInstance().getCurrentUser());
         }
 

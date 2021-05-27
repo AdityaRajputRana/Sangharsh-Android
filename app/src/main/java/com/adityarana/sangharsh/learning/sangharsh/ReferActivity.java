@@ -2,6 +2,8 @@ package com.adityarana.sangharsh.learning.sangharsh;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,9 +11,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.adityarana.sangharsh.learning.sangharsh.Adapter.ReferralAdapter;
 import com.adityarana.sangharsh.learning.sangharsh.Model.Referral;
 import com.adityarana.sangharsh.learning.sangharsh.Model.UserReferral;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,7 +26,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
+import java.sql.Ref;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -31,6 +37,7 @@ public class ReferActivity extends AppCompatActivity {
     private static final String ALLOWED_CHARACTERS ="0123456789qwertyuiopasdfghjklzxcvbnm";
 
     private LinearLayout referLayout;
+    private RecyclerView recyclerView;
     private LinearLayout processLayout;
 
     private TextView processTxt;
@@ -38,6 +45,7 @@ public class ReferActivity extends AppCompatActivity {
     private Button shareBtn;
 
     private String referId;
+    private Button redeemBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,16 +67,61 @@ public class ReferActivity extends AppCompatActivity {
         }
     }
 
-    private void setUpViews() {
+    private void setUpViews(){
+        setUpViews(false);
+    }
+
+    private void setUpViews(Boolean isFirst) {
         codeTxt.setText(referId);
         processLayout.setVisibility(View.GONE);
         referLayout.setVisibility(View.VISIBLE);
 
-        loadReferredDetails();
+        if (!isFirst) {
+            loadReferredDetails();
+        }
     }
 
     private void loadReferredDetails() {
-        //todo
+        FirebaseDatabase.getInstance().getReference("referrals")
+        .child(referId)
+        .addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if (snapshot.exists() && snapshot.getValue() != null){
+                    Boolean toShow = true;
+                    if (snapshot.child("referred").exists() && snapshot.child("referred") != null) {
+                        HashMap <String, Referral> map = new HashMap<String, Referral>();
+                        for (DataSnapshot x : snapshot.child("referred").getChildren()){
+                            Referral referral = x.getValue(Referral.class);
+                            map.put(x.getKey(), referral);
+                            if (toShow && referral.getPurchaseMade() != null && referral.getPurchaseMade()
+                            && (referral.getRedeemed() == null || !referral.getRedeemed())){
+                                showRedeemBtn();
+                                toShow = false;
+                            }
+                        }
+                        if (map.size() > 0) {
+                            showReferred(map);
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void showRedeemBtn() {
+    }
+
+    private void showReferred(HashMap<String, Referral> referrals){
+        findViewById(R.id.referredDetailsLayout).setVisibility(View.VISIBLE);
+        ReferralAdapter adapter = new ReferralAdapter(referrals, this);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void downloadReferId() {
@@ -150,7 +203,7 @@ public class ReferActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()){
                             ReferActivity.this.getSharedPreferences("MyPref", MODE_PRIVATE).edit().putString("referralId", referId).apply();
-                            setUpViews();
+                            setUpViews(true);
                         } else {
                             generateReferralId();
                         }
@@ -180,5 +233,8 @@ public class ReferActivity extends AppCompatActivity {
                 startActivity(Intent.createChooser(intent, "share using"));
             }
         });
+
+        recyclerView = findViewById(R.id.recyclerView);
+
     }
 }
