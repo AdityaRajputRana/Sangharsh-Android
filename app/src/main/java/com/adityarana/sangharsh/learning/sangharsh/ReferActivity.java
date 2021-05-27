@@ -390,6 +390,8 @@ public class ReferActivity extends AppCompatActivity {
         ReferralAdapter adapter = new ReferralAdapter(referrals, this);
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        processLayout.setVisibility(View.GONE);
+        processTxt.setText("");
     }
 
     private void downloadReferId() {
