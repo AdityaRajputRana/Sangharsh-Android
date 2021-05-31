@@ -38,7 +38,7 @@
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_max="wrap"
             app:layout_constraintWidth_percent="0.9"
-            android:text="Sangharh The learning app" />
+            android:text="Sangharsh The learning app" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

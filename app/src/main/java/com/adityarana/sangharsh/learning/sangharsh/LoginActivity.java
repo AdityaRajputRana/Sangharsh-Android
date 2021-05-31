@@ -153,6 +153,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void showReferralEditText() {
+        progressBar.setVisibility(View.GONE);
         enableEverything();
         continueBtn.setEnabled(false);
         findViewById(R.id.referralLayout).setVisibility(View.VISIBLE);
@@ -165,6 +166,8 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 referralAwarded = true;
                 referralUserAdded = true;
+                progressBar.setVisibility(View.VISIBLE);
+                disableEverything();
                 updateUI(FirebaseAuth.getInstance().getCurrentUser());
             }
         });
@@ -373,6 +376,7 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 progressBar.setVisibility(View.VISIBLE);
+                disableEverything();
                 Intent signInIntent = mGoogleSignInClient.getSignInIntent();
                 startActivityForResult(signInIntent, RC_SIGN_IN);
             }
@@ -439,6 +443,8 @@ public class LoginActivity extends AppCompatActivity {
                 firebaseAuthWithGoogle(account.getIdToken());
             } catch (ApiException e) {
                 progressBar.setVisibility(View.GONE);
+                enableEverything();
+                Toast.makeText(this, "Login with Google failed. "+ e.getMessage(), Toast.LENGTH_SHORT).show();
                 Log.w("Google Sign In Result", "Google sign in failed", e);
             }
 
@@ -467,12 +473,13 @@ public class LoginActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        progressBar.setVisibility(View.GONE);
                         if (task.isSuccessful()) {
                             checkNewUSer(task);
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("Firebase Sign In", "signInWithCredential:failure", task.getException());
+                            progressBar.setVisibility(View.GONE);
+                            enableEverything();
                             Snackbar.make((ConstraintLayout) findViewById(R.id.mainLayout), "Authentication Failed.", Snackbar.LENGTH_SHORT).show();
                             updateUI(null);
                         }
@@ -496,8 +503,13 @@ public class LoginActivity extends AppCompatActivity {
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            isNewUserRegistered = true;
-                            updateUI(fuser);
+                            if (task.isSuccessful()){
+                                isNewUserRegistered = true;
+                                updateUI(fuser);
+                            } else {
+                                progressBar.setVisibility(View.GONE);
+                                enableEverything();
+                            }
                         }
                     });
         } else {

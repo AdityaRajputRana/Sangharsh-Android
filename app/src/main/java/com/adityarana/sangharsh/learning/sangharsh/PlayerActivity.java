@@ -144,6 +144,14 @@ public class PlayerActivity extends AppCompatActivity {
             }
         });
 
+        playerView.findViewById(R.id.cross_im).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                player.stop();
+                PlayerActivity.this.finish();
+            }
+        });
+
         speedControls = findViewById(R.id.speedLayout);
         speedText = playerView.findViewById(R.id.speedTxt);
 

@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.logging.Logger;
 
 public class ReferActivity extends AppCompatActivity {
 
@@ -69,6 +70,8 @@ public class ReferActivity extends AppCompatActivity {
     private EditText upiEt;
     private EditText ifscEt;
     private EditText accountNum;
+
+    private ProgressBar processBar;
 
     @Override
     public void onBackPressed() {
@@ -113,11 +116,14 @@ public class ReferActivity extends AppCompatActivity {
 
     private void setUpViews(Boolean isFirst) {
         codeTxt.setText(referId);
-        processLayout.setVisibility(View.GONE);
         referLayout.setVisibility(View.VISIBLE);
 
         if (!isFirst) {
             loadReferredDetails();
+        } else {
+            processBar = findViewById(R.id.progressBar);
+            processBar.setVisibility(View.GONE);
+            processTxt.setText("Now share your code with your friends.\nList of users joined with your code will appear here.");
         }
     }
 
@@ -130,7 +136,7 @@ public class ReferActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists() && snapshot.getValue() != null){
-                    Boolean toShow = true;
+                    boolean toShow = true;
                     if (snapshot.child("referred").exists() && snapshot.child("referred") != null) {
                         HashMap <String, Referral> map = new HashMap<String, Referral>();
                         for (DataSnapshot x : snapshot.child("referred").getChildren()){
@@ -144,8 +150,21 @@ public class ReferActivity extends AppCompatActivity {
                         }
                         if (map.size() > 0) {
                             showReferred(map);
+                        } else {
+                            processBar = findViewById(R.id.progressBar);
+                            processBar.setVisibility(View.GONE);
+                            processTxt.setText("List of users joined with your code will appear here. Share your code now by pressing the above button.");
                         }
+                    } else {
+                        processBar = findViewById(R.id.progressBar);
+                        processBar.setVisibility(View.GONE);
+                        processTxt.setText("List of users joined with your code will appear here. Share your code now by pressing the above button.");
                     }
+                } else {
+                    Log.i("MyLogs", "List is null");
+                    processBar = findViewById(R.id.progressBar);
+                    processBar.setVisibility(View.GONE);
+                    processTxt.setText("Something went wrong while talking to the servers");
                 }
             }
 
