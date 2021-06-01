@@ -61,13 +61,10 @@ public class PhoneAuthActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private ProgressBar progressBar;
     private boolean isOtpSend = false;
-    private boolean referralUserAdded = false;
     private String mobileNum;
     private String mVerificationID;
     PhoneAuthProvider.ForceResendingToken mResendToken;
 
-    private Boolean isNewUserRegistered = false;
-    private boolean referralAwarded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +92,7 @@ public class PhoneAuthActivity extends AppCompatActivity {
 
 
     private void updateUI(FirebaseUser user) {
-        if (user != null && isNewUserRegistered && referralAwarded && referralUserAdded) {
+        if (user != null) {
             setResult(RESULT_OK);
             finish();
         }
@@ -219,7 +216,6 @@ public class PhoneAuthActivity extends AppCompatActivity {
 
         if (task.getResult().getAdditionalUserInfo().isNewUser()) {
             User user = new User();
-            showReferralEditText();
             user.setUid(task.getResult().getUser().getUid());
             String androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
             user.setLoginUUID(androidId);
@@ -231,7 +227,6 @@ public class PhoneAuthActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if (task.isSuccessful()) {
-                                isNewUserRegistered = true;
                                 updateUI(fuser);
                             } else {
                                 enableEverything();
@@ -240,125 +235,12 @@ public class PhoneAuthActivity extends AppCompatActivity {
                         }
                     });
         } else {
-            isNewUserRegistered = true;
-            referralAwarded = true;
-            referralUserAdded = true;
             updateUI(fuser);
         }
     }
 
-    private void showReferralEditText() {
-        progressBar.setVisibility(View.GONE);
-        continueBtn.setEnabled(true);
-        phoneEditTxt.setText("");
-        phoneEditTxt.setInputType(InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS);
-        phoneEditTxt.setEnabled(true);
-        infoTxt.setText("If you have any referral Code you may enter here (Optional). If not click the skip button");
-        phoneEditTxt.setHint("Referral Code");
-
-        Button skipBtn = findViewById(R.id.skipBtn);
-        skipBtn.setVisibility(View.VISIBLE);
-        skipBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                referralAwarded = true;
-                referralUserAdded = true;
-                updateUI(FirebaseAuth.getInstance().getCurrentUser());
-            }
-        });
-
-        continueBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (phoneEditTxt.getText() != null && !phoneEditTxt.getText().toString().isEmpty()){
-                    verifyReferralId();
-                    disableEverything();
-                }
-            }
-        });
-    }
-
-    private void verifyReferralId() {
-
-        Log.i("MyLogs", "Verifying Now");
-
-        FirebaseDatabase.getInstance()
-                .getReference("referrals")
-                .child(phoneEditTxt.getText().toString().toUpperCase())
-                .child("exists")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists() && snapshot.getValue() != null && snapshot.getValue(Boolean.class)){
-                            startSignUp();
-                        } else {
-                            enableEverything();
-                            phoneEditTxt.setError("This referral code does not exists");
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        enableEverything();
-                        Toast.makeText(PhoneAuthActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                });
-    }
-
-    private void startSignUp() {
-        addReferral();
-        addReferredUser();
-    }
-
-    private void addReferredUser() {
-        FirebaseUser user = mAuth.getCurrentUser();
-        User mUser = new User();
-        mUser.setUid(user.getUid());
-        mUser.setReferredBy(phoneEditTxt.getText().toString().toUpperCase());
-        String androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
-        mUser.setLoginUUID(androidId);
-        FirebaseDatabase.getInstance()
-                .getReference("users")
-                .child(user.getUid())
-                .setValue(mUser)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        referralUserAdded = true;
-                        if (referralAwarded && isNewUserRegistered){
-                            updateUI(user);
-                        }
-                    }
-                });
-    }
 
 
-    private void addReferral() {
-        FirebaseUser user = mAuth.getCurrentUser();
-
-        Referral referral = new Referral();
-        referral.setDetails(user.getDisplayName());
-        referral.setPurchaseMade(false);
-        HashMap<String, Object> map = new HashMap<String, Object>();
-        map.put("timestamp", ServerValue.TIMESTAMP);
-        referral.setLastUpdates(map);
-        referral.setName(user.getPhoneNumber());
-        FirebaseDatabase.getInstance()
-                .getReference("referrals")
-                .child(phoneEditTxt.getText().toString().toUpperCase())
-                .child("referred")
-                .child(user.getUid())
-                .setValue(referral)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        referralAwarded = true;
-                        if (referralUserAdded && isNewUserRegistered){
-                            updateUI(user);
-                        }
-                    }
-                });
-    }
 
 
 
