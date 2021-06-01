@@ -160,6 +160,7 @@ public class MainActivity extends AppCompatActivity implements BannerFragment.Li
                         }
                     }
                 } else {
+                    Toast.makeText(MainActivity.this, "Error fetching the data " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                     Log.i("Get Data", "Data Fetching Error:" + task.getException().toString());
                 }
             }
@@ -186,6 +187,7 @@ public class MainActivity extends AppCompatActivity implements BannerFragment.Li
                         } else {
                             purchased = new ArrayList<String>();
                             Log.i("Error:Purchased ", String.valueOf(task.getException()));
+                            Toast.makeText(MainActivity.this, "Something went wrong " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                             if (homeDocument != null && toSetUp) {
                                 setCourcesUI();
                             }

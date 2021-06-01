@@ -29,6 +29,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.FirebaseException;
@@ -134,9 +135,7 @@ public class PhoneAuthActivity extends AppCompatActivity {
         continueBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                phoneEditTxt.setEnabled(false);
-                continueBtn.setEnabled(false);
-                progressBar.setVisibility(View.VISIBLE);
+                disablePhone();
                 if (isOtpSend) {
                     verifyOtp();
                 } else {
@@ -144,6 +143,18 @@ public class PhoneAuthActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void disablePhone(){
+        phoneEditTxt.setEnabled(false);
+        continueBtn.setEnabled(false);
+        progressBar.setVisibility(View.VISIBLE);
+    }
+
+    private void enablePhone(){
+        phoneEditTxt.setEnabled(true);
+        continueBtn.setEnabled(true);
+        progressBar.setVisibility(View.GONE);
     }
 
     private void verifyOtp() {
@@ -170,19 +181,27 @@ public class PhoneAuthActivity extends AppCompatActivity {
             mAuth = FirebaseAuth.getInstance();
         }
         mAuth.signInWithCredential(credential)
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        enablePhone();
+                        Toast.makeText(PhoneAuthActivity.this, "Login Failed "+ e.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                })
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             checkNewUSer(task);
                         } else {
+                            Toast.makeText(PhoneAuthActivity.this, "Login with phone failed!", Toast.LENGTH_SHORT).show();
                             Log.w("PhoneAuth", "signInWithCredential:failure", task.getException());
                             if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                 infoTxt.setText("Entered OTP was incorrect. Please Try again");
                                 phoneEditTxt.setEnabled(true);
                                 phoneEditTxt.setHint("Enter OTP");
                                 infoTxt.setTextColor(getResources().getColor(R.color.red_color));
-                                progressBar.setVisibility(View.INVISIBLE);
+                                progressBar.setVisibility(View.GONE);
                             } else {
                                 infoTxt.setText("Verification Timed Out. Enter Your Mobile number again");
                                 phoneEditTxt.setEnabled(true);
@@ -211,8 +230,13 @@ public class PhoneAuthActivity extends AppCompatActivity {
                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
-                            isNewUserRegistered = true;
-                            updateUI(fuser);
+                            if (task.isSuccessful()) {
+                                isNewUserRegistered = true;
+                                updateUI(fuser);
+                            } else {
+                                enableEverything();
+                                Toast.makeText(PhoneAuthActivity.this, "Registering new User failed " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
                         }
                     });
         } else {
@@ -362,6 +386,7 @@ public class PhoneAuthActivity extends AppCompatActivity {
         @Override
         public void onVerificationFailed(@NonNull FirebaseException e) {
             Toast.makeText(PhoneAuthActivity.this, "Verification Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            enablePhone();
         }
 
         @Override
@@ -370,10 +395,7 @@ public class PhoneAuthActivity extends AppCompatActivity {
 
             mVerificationID = s;
             mResendToken = forceResendingToken;
-
-            progressBar.setVisibility(View.GONE);
-            continueBtn.setEnabled(true);
-            phoneEditTxt.setEnabled(true);
+            enablePhone();
             infoTxt.setText("Enter the OTP sent to your mobile number " + phoneEditTxt.getText().toString());
             phoneEditTxt.setText("");
             phoneEditTxt.setHint("Enter OTP");
