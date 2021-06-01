@@ -40,22 +40,17 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText nameEt;
     private EditText emailEt;
     private EditText passEt;
-    private EditText referralEt;
     private EditText confirmEt;
     private Button registerBtn;
 
     private TextInputLayout nameLayout;
     private TextInputLayout emailLayout;
     private TextInputLayout passLayout;
-    private TextInputLayout referralLayout;
     private TextInputLayout confirmLayout;
 
     private ProgressBar progressBar;
 
-    private Boolean referralAwarded = false;
-    private Boolean referralUserAdded = false;
     private Boolean userAddedToStore = false;
-    private Boolean signedInAno = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,13 +64,11 @@ public class RegisterActivity extends AppCompatActivity {
         emailEt = findViewById(R.id.emailET);
         passEt = findViewById(R.id.passwordET);
         confirmEt = findViewById(R.id.confirmPassEt);
-        referralEt = findViewById(R.id.referralEt);
         registerBtn = findViewById(R.id.registerBtn);
 
         nameLayout = findViewById(R.id.nameLayout);
         emailLayout = findViewById(R.id.emailLayout);
         passLayout = findViewById(R.id.passwordLayout);
-        referralLayout = findViewById(R.id.referralLayout);
         confirmLayout = findViewById(R.id.confirmPasswordLayout);
 
         progressBar = findViewById(R.id.progressBar);
@@ -84,18 +77,7 @@ public class RegisterActivity extends AppCompatActivity {
         String referredBy = preferences.getString("referredBy", null);
 
         mAuth = FirebaseAuth.getInstance();
-        if (referredBy != null && !referredBy.isEmpty()){
-            referralEt.setText(referredBy.toUpperCase());
-            mAuth.signInAnonymously()
-                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if (task.isSuccessful()){
-                                signedInAno = true;
-                            }
-                        }
-                    });
-        }
+
         registerBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -124,24 +106,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         if (!isEmpty){
             disableEverything();
-            if (referralEt.getText() != null && !referralEt.getText().toString().isEmpty()){
-                if (signedInAno){
-                    verifyReferralId();
-                } else {
-                    mAuth.signInAnonymously()
-                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()){
-                                        signedInAno = true;
-                                        verifyReferralId();
-                                    }
-                                }
-                            });
-                }
-            } else {
-                startSignUp();
-            }
+            startSignUp();
         }
     }
 
@@ -163,7 +128,6 @@ public class RegisterActivity extends AppCompatActivity {
                                         public void onComplete(@NonNull Task<Void> task) {
                                                 Log.d("Auth", "User profile updated.");
                                                 Log.d("Auth", "createUserWithEmail:success");
-                                                if (referralEt.getText() == null || referralEt.getText().toString().isEmpty()){
                                                     User mUser = new User();
                                                     mUser.setUid(user.getUid());
                                                     String androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
@@ -179,12 +143,7 @@ public class RegisterActivity extends AppCompatActivity {
                                                                     userAddedToStore = true;
                                                                 }
                                                             });
-                                                } else {
-                                                    addReferral();
-                                                    addReferredUser();
-                                                    addUserToStore();
                                                 }
-                                        }
                                     });
 
                            ;
@@ -200,110 +159,10 @@ public class RegisterActivity extends AppCompatActivity {
                 });
     }
 
-    private void addUserToStore() {
-        FirebaseUser user = mAuth.getCurrentUser();
-        User mUser = new User();
-        mUser.setUid(user.getUid());
-        String androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
-        mUser.setLoginUUID(androidId);
-        FirebaseFirestore.getInstance()
-                .collection("Users")
-                .document(user.getUid())
-                .set(mUser)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()){
-                            userAddedToStore = true;
-                            if (referralUserAdded && referralAwarded){
-                                updateUI(user);
-                            }
-                        } else {
-                            Toast.makeText(RegisterActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                            enableEverything();
-                        }
-                    }
-                });
-    }
 
-    private void verifyReferralId() {
 
-        Log.i("MyLogs", "Verifying Now");
-
-        FirebaseDatabase.getInstance()
-                .getReference("referrals")
-                .child(referralEt.getText().toString().toUpperCase())
-                .child("exists")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists() && snapshot.getValue() != null && snapshot.getValue(Boolean.class)){
-                            startSignUp();
-                        } else {
-                            enableEverything();
-                            referralLayout.setError("This referral code does not exists");
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        enableEverything();
-                        Toast.makeText(RegisterActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                });
-    }
-
-    private void addReferredUser() {
-        FirebaseUser user = mAuth.getCurrentUser();
-        User mUser = new User();
-        mUser.setUid(user.getUid());
-        mUser.setReferredBy(referralEt.getText().toString().toUpperCase());
-        String androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
-        mUser.setLoginUUID(androidId);
-        FirebaseDatabase.getInstance()
-                .getReference("users")
-                .child(user.getUid())
-                .setValue(mUser)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        referralUserAdded = true;
-                        if (referralAwarded && userAddedToStore){
-                            updateUI(user);
-                        }
-                    }
-                });
-    }
-    private void addReferral() {
-        FirebaseUser user = mAuth.getCurrentUser();
-
-        Referral referral = new Referral();
-        referral.setDetails(user.getDisplayName());
-        referral.setName(user.getDisplayName());
-        referral.setPurchaseMade(false);
-        HashMap<String, Object> map = new HashMap<String, Object>();
-        map.put("timestamp", ServerValue.TIMESTAMP);
-        referral.setLastUpdates(map);
-
-        FirebaseDatabase.getInstance()
-                .getReference("referrals")
-                .child(referralEt.getText().toString().toUpperCase())
-                .child("referred")
-                .child(user.getUid())
-                .setValue(referral)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        referralAwarded = true;
-                        if (referralUserAdded && userAddedToStore){
-                            updateUI(user);
-                        }
-                    }
-                });
-    }
 
     private void updateUI(FirebaseUser user) {
-        this.getSharedPreferences("MyPref", MODE_PRIVATE).edit().remove("referredBy").apply();
         if (user != null) {
             if (user.isEmailVerified()) {
                 setResult(RESULT_OK);
@@ -336,7 +195,6 @@ public class RegisterActivity extends AppCompatActivity {
         passLayout.setEnabled(false);
         emailLayout.setEnabled(false);
         nameLayout.setEnabled(false);
-        referralLayout.setEnabled(false);
         progressBar.setVisibility(View.VISIBLE);
     }
 
@@ -346,7 +204,6 @@ public class RegisterActivity extends AppCompatActivity {
         passLayout.setEnabled(true);
         emailLayout.setEnabled(true);
         nameLayout.setEnabled(true);
-        referralLayout.setEnabled(true);
         progressBar.setVisibility(View.GONE);
     }
 }
