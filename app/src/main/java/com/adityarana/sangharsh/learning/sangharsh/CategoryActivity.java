@@ -13,9 +13,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -64,11 +67,21 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
     private Category category;
     private TextView textView;
     private Button buyNowBtn;
+    private EditText phoneEditTxt;
+    private Button continueBtn;
+    private Button skipBtn;
     private OrderRepository orderRepository;
     private Boolean isPurchased;
 
     private InterstitialAd mInterstitialAd;
     private String orderId;
+    private boolean referralDone = false;
+    private boolean orderCreated = false;
+    private OrderResponse mOrder;
+
+    private ConstraintLayout referralLayout;
+
+    private String referralId;
 
 
     @Override
@@ -168,13 +181,18 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
         buyNowBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                loadReferralLayout();
                 OrderParams params = new OrderParams();
                 progressBar.setVisibility(View.VISIBLE);
                 orderRepository.getPurchaseService().createOrder(params).enqueue(new Callback<OrderResponse>() {
                     @Override
                     public void onResponse(Call<OrderResponse> call, Response<OrderResponse> response) {
                         if (response.body() != null) {
-                            startPayment(response.body());
+                            orderCreated = true;
+                            mOrder = response.body();
+                            if (referralDone){
+                                startPayment(response.body());
+                            }
                         } else {
                             progressBar.setVisibility(View.GONE);
                             Toast.makeText(CategoryActivity.this, "There was some problem with your request! Please contact Sangharsh Team", Toast.LENGTH_SHORT).show();
@@ -183,11 +201,116 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
 
                     @Override
                     public void onFailure(Call<OrderResponse> call, Throwable t) {
+                        progressBar.setVisibility(View.GONE);
                         Toast.makeText(CategoryActivity.this, "Some unexpected error occurred! Please contact Sangharsh Team", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
         });
+    }
+
+    private void loadReferralLayout() {
+        referralLayout = findViewById(R.id.referralLayout);
+        continueBtn = findViewById(R.id.continueBtn);
+        skipBtn = findViewById(R.id.skipBtn);
+        continueBtn.setEnabled(false);
+        referralLayout.setVisibility(View.VISIBLE);
+        skipBtn.setVisibility(View.VISIBLE);
+
+        skipBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               referralLayout.setVisibility(View.GONE);
+               referralDone = true;
+               if (orderCreated && mOrder != null){
+                   startPayment(mOrder);
+               }
+            }
+        });
+
+        phoneEditTxt = findViewById(R.id.editTextPhone);
+
+        phoneEditTxt.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+                int charLimit = 6;
+                if (phoneEditTxt.getText().toString().length() != charLimit) {
+                    continueBtn.setEnabled(false);
+                    continueBtn.setBackground(CategoryActivity.this.getResources().getDrawable(R.drawable.btn_primary_dis_bg));
+                } else {
+                    continueBtn.setBackground(CategoryActivity.this.getResources().getDrawable(R.drawable.btn_primary_bg));
+                    continueBtn.setEnabled(true);
+                }
+            }
+        });
+
+        continueBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (phoneEditTxt.getText() != null && !phoneEditTxt.getText().toString().isEmpty()){
+                    verifyReferralId();
+                    disableRef();
+                }
+            }
+        });
+    }
+
+    private void verifyReferralId() {
+
+        Log.i("MyLogs", "Verifying Now");
+
+        FirebaseDatabase.getInstance()
+                .getReference("referrals")
+                .child(phoneEditTxt.getText().toString().toUpperCase())
+                .child("exists")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists() && snapshot.getValue() != null && snapshot.getValue(Boolean.class)){
+                            Toast.makeText(CategoryActivity.this, "Referral code successfully applied!", Toast.LENGTH_SHORT).show();
+                            if (orderCreated){
+                                startPayment(mOrder);
+                                enableRef();
+                            }
+                            referralId = phoneEditTxt.getText().toString();
+                            referralDone = true;
+                            referralLayout.setVisibility(View.GONE);
+                        } else {
+                            enableRef();
+                            phoneEditTxt.setError("This referral code does not exists");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        enableRef();
+                        Toast.makeText(CategoryActivity.this, error.getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
+    }
+
+
+    private void disableRef() {
+        progressBar.setVisibility(View.VISIBLE);
+        continueBtn.setEnabled(false);
+        skipBtn.setEnabled(false);
+        phoneEditTxt.setEnabled(false);
+    }
+
+    private void enableRef() {
+        continueBtn.setEnabled(true);
+        skipBtn.setEnabled(true);
+        phoneEditTxt.setEnabled(true);
     }
 
     private void requestData() {
@@ -217,6 +340,8 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
     }
 
     public void startPayment(OrderResponse response) {
+        orderCreated = false;
+        referralDone = false;
 
         Checkout checkout = new Checkout();
         checkout.setKeyID("rzp_live_r2cS3xBOpMSjm2");
@@ -286,6 +411,7 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
                     progressBar.setVisibility(View.GONE);
                     buyNowBtn.setVisibility(View.GONE);
                     isPurchased = true;
+                    checkReferral();
                     CategoryActivity.this.getSharedPreferences("MY_PREF", MODE_PRIVATE).edit()
                             .putString("PURCHASED_NOW", homeCategory.getId()).apply();
                 } else {
@@ -323,28 +449,32 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
     }
 
     private void checkReferral() {
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        FirebaseDatabase.getInstance()
-                .getReference("users")
-                .child(user.getUid())
-                .child("referredBy")
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists() && snapshot.getValue() != null && !snapshot.getValue(String.class).isEmpty() &&
-                        orderId != null && !orderId.isEmpty()){
-                            rewardReferral(snapshot.getValue(String.class));
-                        } else {
-                            enableEverything();
-                        }
-                    }
+        if (referralId != null && !referralId.isEmpty() && referralId.length() >=6){
+            rewardReferral(referralId);
+        }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                        enableEverything();
-                        Toast.makeText(CategoryActivity.this, "Something went wrong while rewarding the referral", Toast.LENGTH_SHORT).show();
-                    }
-                });
+//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//        FirebaseDatabase.getInstance()
+//                .getReference("users")
+//                .child(user.getUid())
+//                .child("referredBy")
+//                .addListenerForSingleValueEvent(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                        if (snapshot.exists() && snapshot.getValue() != null && !snapshot.getValue(String.class).isEmpty() &&
+//                        orderId != null && !orderId.isEmpty()){
+//                            rewardReferral(snapshot.getValue(String.class));
+//                        } else {
+//                            enableEverything();
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError error) {
+//                        enableEverything();
+//                        Toast.makeText(CategoryActivity.this, "Something went wrong while rewarding the referral", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
     }
 
     private void rewardReferral(String referralId) {
