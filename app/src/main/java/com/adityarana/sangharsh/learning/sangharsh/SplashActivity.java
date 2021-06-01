@@ -20,6 +20,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -38,6 +39,8 @@ public class SplashActivity extends AppCompatActivity {
                 startActivity();
             }
         });
+
+//        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 

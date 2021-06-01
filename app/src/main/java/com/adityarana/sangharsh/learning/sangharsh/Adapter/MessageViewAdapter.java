@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.adityarana.sangharsh.learning.sangharsh.Model.Message;
 import com.adityarana.sangharsh.learning.sangharsh.R;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -54,6 +55,17 @@ public class MessageViewAdapter extends RecyclerView.Adapter<MessageViewAdapter.
 //            Glide.with(context)
 //                    .load(messages.get(position).getAttachments())
 //                    .into(holder.imageView);
+
+            if (!Picasso.get().areIndicatorsEnabled()){
+                Log.i("Picasso", "Enabling flags");
+                Picasso.get().setIndicatorsEnabled(true);
+                Picasso.get().setLoggingEnabled(true);
+            } else {
+                Log.i("Picasso", "already indicated flags");
+            }
+
+            Log.i("Picasso", "loading");
+
             Picasso.get()
                     .load(messages.get(position).getAttachments())
                     .into(holder.imageView);
