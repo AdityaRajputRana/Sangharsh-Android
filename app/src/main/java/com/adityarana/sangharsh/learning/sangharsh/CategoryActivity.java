@@ -398,7 +398,6 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
 
     @Override
     public void onPaymentSuccess(String s) {
-        Toast.makeText(this, "Test payment done!", Toast.LENGTH_SHORT).show();
         FirebaseFirestore.getInstance().collection("Users")
                 .document(FirebaseAuth.getInstance()
                 .getCurrentUser().getUid())

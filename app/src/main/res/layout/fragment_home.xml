@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#f6f6f6"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Fragments.HomeFragment">
 
@@ -49,12 +50,58 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
+                <LinearLayout
+                    android:id="@+id/buttonPanel"
+                    android:orientation="horizontal"
+                    app:layout_constraintTop_toBottomOf="@id/viewPager"
+                    android:padding="16dp"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/doubtBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:backgroundTint="@android:color/white"
+                        android:fontFamily="@font/poppins_medium"
+                        android:textSize="16sp"
+                        android:text="Doubts Section"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        app:cornerRadius="10dp"
+                        android:textColor="@color/textBlack"
+                        android:layout_marginEnd="8dp"
+                        app:iconTint="@android:color/black"
+                        app:icon="@drawable/ic_baseline_question_answer_24"
+                        android:textAllCaps="false" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/notificationBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:backgroundTint="@android:color/white"
+                        android:fontFamily="@font/poppins_medium"
+                        android:textSize="16sp"
+                        android:text="Notifications"
+                        app:cornerRadius="10dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginBottom="4dp"
+                        android:layout_weight="1"
+                        android:textColor="@color/textBlack"
+                        app:icon="@drawable/ic_baseline_notifications_24"
+                        app:iconTint="@android:color/black"
+                        android:textAllCaps="false" />
+
+
+                </LinearLayout>
+
                 <TextView
                     android:id="@+id/availableTxt"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/viewPager"
+                    app:layout_constraintTop_toBottomOf="@id/buttonPanel"
                     android:textSize="28sp"
                     android:padding="16dp"
                     android:visibility="gone"

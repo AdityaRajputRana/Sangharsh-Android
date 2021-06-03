@@ -11,8 +11,8 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="app_id">ca-app-pub-6764809003226506~9017874115</string>
-<!--        <string name="banner">ca-app-pub-6764809003226506/7513220753</string>-->
-<!--        <string name="interstitial">ca-app-pub-6764809003226506/8228919515</string>-->
+    <!--        <string name="banner">ca-app-pub-6764809003226506/7513220753</string>-->
+    <!--        <string name="interstitial">ca-app-pub-6764809003226506/8228919515</string>-->
 
     <string name="banner">ca-app-pub-3940256099942544/6300978111</string>
     <string name="interstitial">ca-app-pub-3940256099942544/1033173712</string>

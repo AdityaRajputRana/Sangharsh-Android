@@ -1,6 +1,8 @@
 package com.adityarana.sangharsh.learning.sangharsh.Fragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,19 +17,25 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.adityarana.sangharsh.learning.sangharsh.Adapter.BannerPagerAdapter;
 import com.adityarana.sangharsh.learning.sangharsh.Adapter.HomeRecyclerViewAdapter;
 import com.adityarana.sangharsh.learning.sangharsh.Adapter.HomeViewPagerAdapter;
 import com.adityarana.sangharsh.learning.sangharsh.CategoryActivity;
+import com.adityarana.sangharsh.learning.sangharsh.HelpActivity;
 import com.adityarana.sangharsh.learning.sangharsh.Model.Banner;
+import com.adityarana.sangharsh.learning.sangharsh.Model.Category;
 import com.adityarana.sangharsh.learning.sangharsh.Model.HomeCategory;
 import com.adityarana.sangharsh.learning.sangharsh.Model.HomeDocument;
+import com.adityarana.sangharsh.learning.sangharsh.NotificationActivity;
 import com.adityarana.sangharsh.learning.sangharsh.R;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -42,6 +50,10 @@ public class HomeFragment extends Fragment implements HomeRecyclerViewAdapter.Li
     private ArrayList<Banner> banners;
     private ArrayList<String> purchased;
     private HomeRecyclerViewAdapter adapter;
+
+    private LinearLayout buttonsPannel;
+
+    private ArrayList<HomeCategory> purchasedCats;
 
 
     public HomeFragment() {
@@ -58,6 +70,21 @@ public class HomeFragment extends Fragment implements HomeRecyclerViewAdapter.Li
     }
     public void setHome(HomeDocument homeDocument, ArrayList<String> purchased){
         this.purchased = purchased;
+
+        purchasedCats = new ArrayList<HomeCategory>();
+        if (homeDocument != null && homeDocument.getCourses() != null && homeDocument.getCourses().size() > 0) {
+            for (HomeCategory category : homeDocument.getCourses()) {
+                if (purchased.contains(category.getId())) {
+                    purchasedCats.add(category);
+                }
+            }
+        }
+
+        if (buttonsPannel != null){
+            buttonsPannel.setVisibility(View.VISIBLE);
+        }
+
+
         adapter = new HomeRecyclerViewAdapter(homeDocument.getCourses(), getActivity(),
                 this, purchased);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -112,12 +139,56 @@ public class HomeFragment extends Fragment implements HomeRecyclerViewAdapter.Li
         counterTxt = (TextView) view.findViewById(R.id.counter);
         availTxt = (TextView) view.findViewById(R.id.availableTxt);
 
+        view.findViewById(R.id.doubtBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (purchasedCats != null){
+                    startMessageActivity();
+                } else {
+                    Toast.makeText(getActivity(), "Please wait while we load data,", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        view.findViewById(R.id.notificationBtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+               startActivity(new Intent(getActivity(), NotificationActivity.class));
+            }
+        });
+
         AdView mAdView = view.findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
 
+        buttonsPannel = view.findViewById(R.id.buttonPanel);
+        if (purchasedCats != null){
+            buttonsPannel.setVisibility(View.VISIBLE);
+        }
         return view;
     }
+
+    private void startMessageActivity() {
+        if (purchasedCats!= null && purchasedCats.size() > 0) {
+            Intent intent = new Intent(getActivity(), HelpActivity.class);
+            intent.putExtra("CHAT_ID", FirebaseAuth.getInstance().getCurrentUser().getUid());
+            intent.putExtra("NAME", "Sangharsh Support");
+            startActivity(intent);
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+            builder.setTitle("No purchased courses found");
+            builder.setMessage("Only the users which have purchased at least 1 course can seek help from us. This is to prevent bots and spammers from flooding our premium inbox.");
+            builder.setPositiveButton("I Understand", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialogInterface, int i) {
+                    dialogInterface.dismiss();
+                }
+            });
+            builder.setCancelable(true);
+            builder.show();
+        }
+    }
+
 
     @Override
     public void onClick(HomeCategory category) {

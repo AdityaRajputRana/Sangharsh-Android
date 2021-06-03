@@ -15,8 +15,10 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ReferActivity"
-            android:theme="@style/MaterialTheme"></activity>
+        <activity android:name=".NotificationActivity"></activity>
+        <activity
+            android:name=".ReferActivity"
+            android:theme="@style/MaterialTheme" />
 
         <service android:name=".FCM.FirebaseMessageReceiver">
             <intent-filter>
@@ -59,7 +61,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/MaterialTheme" />
     </application>
 
 </manifest>
