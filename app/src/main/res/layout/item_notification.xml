@@ -16,8 +16,8 @@
         
         <ImageView
             android:id="@+id/icon"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
@@ -32,7 +32,7 @@
             android:textColor="@android:color/black"
             android:fontFamily="@font/poppins"
             android:layout_marginEnd="8dp"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:text="This is a new test notification. We are happy to see you here." />
 
         <TextView
@@ -47,7 +47,7 @@
             android:textColor="#7c7c7c"
             android:fontFamily="@font/poppins"
             android:layout_marginEnd="8dp"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:text="This is a new test notification. We are happy to see you here." />
 
         <androidx.constraintlayout.widget.Barrier
@@ -65,14 +65,14 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             android:fontFamily="@font/poppins"
-            android:textSize="14sp"
+            android:textSize="16sp"
             android:textColor="#4B4B4B" />
 
         <ImageView
             android:id="@+id/image"
-            android:layout_width="65dp"
+            android:layout_width="70dp"
             android:layout_height="40dp"
-            android:visibility="gone"
+            android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"/>
 
