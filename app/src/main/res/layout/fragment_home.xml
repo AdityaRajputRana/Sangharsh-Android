@@ -55,7 +55,7 @@
                     android:orientation="horizontal"
                     app:layout_constraintTop_toBottomOf="@id/viewPager"
                     android:padding="16dp"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
@@ -63,6 +63,8 @@
                         android:id="@+id/doubtBtn"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:paddingBottom="16dp"
+                        android:paddingTop="16dp"
                         android:backgroundTint="@android:color/white"
                         android:fontFamily="@font/poppins_medium"
                         android:textSize="14sp"
@@ -70,6 +72,7 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         app:cornerRadius="10dp"
+                        android:textScaleX="0.95"
                         android:textColor="@color/textBlack"
                         android:layout_marginEnd="4dp"
                         app:iconTint="@android:color/black"
@@ -81,19 +84,21 @@
                         android:id="@+id/notificationBtn"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
+                        android:layout_marginStart="4dp"
+                        android:layout_weight="1"
                         android:backgroundTint="@android:color/white"
                         android:fontFamily="@font/poppins_medium"
-                        app:iconPadding="0dp"
-                        android:textSize="14sp"
+                        android:paddingTop="16dp"
+                        android:paddingBottom="16dp"
                         android:text="Notifications"
-                        app:cornerRadius="10dp"
-                        android:layout_marginStart="4dp"
-                        android:layout_marginBottom="4dp"
-                        android:layout_weight="1"
+                        android:textAllCaps="false"
                         android:textColor="@color/textBlack"
+                        android:textScaleX="0.98"
+                        android:textSize="14sp"
+                        app:cornerRadius="10dp"
                         app:icon="@drawable/ic_baseline_notifications_24"
-                        app:iconTint="@android:color/black"
-                        android:textAllCaps="false" />
+                        app:iconPadding="0dp"
+                        app:iconTint="@android:color/black" />
 
 
                 </LinearLayout>

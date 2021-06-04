@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -43,7 +44,7 @@ public class ProfileFragment extends Fragment {
     private ArrayList<String> buttonNames = new ArrayList<>(Arrays.asList(
             "Purchased Courses",
             "Log out",
-            "Doubts Section",
+            "Contact Us",
             "Refer and Earn",
             "Privacy Policy"
     ));
@@ -125,7 +126,7 @@ public class ProfileFragment extends Fragment {
                     logOut();
                     break;
                 case 2:
-                    startMessageActivity();
+                    contactUs();
                     break;
                 case 3:
                     startReferralActivity();
@@ -138,6 +139,15 @@ public class ProfileFragment extends Fragment {
             }
         }
     };
+
+    private void contactUs() {
+        String[] addresses = new String[]{"harsh6202960665@gmail.com"};
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Need help in Sangharsh Learning app");
+        startActivity(intent);
+    }
 
     private void startReferralActivity() {
         startActivity(new Intent(getActivity(), ReferActivity.class));
