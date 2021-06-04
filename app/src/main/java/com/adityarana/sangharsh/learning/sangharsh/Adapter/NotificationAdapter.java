@@ -85,9 +85,9 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
             int years = (int) (months/12);
 
             if (seconds<60){
-                holder.timeTxt.setText(String.valueOf(seconds) + "seconds");
+                holder.timeTxt.setText(String.valueOf(seconds) + " sec");
             } else if (minutes<60){
-                holder.timeTxt.setText(String.valueOf(minutes) + "minutes");
+                holder.timeTxt.setText(String.valueOf(minutes) + " min");
             } else if (hours<24){
                 holder.timeTxt.setText(String.valueOf(hours) + "h");
             } else if (days<31){
