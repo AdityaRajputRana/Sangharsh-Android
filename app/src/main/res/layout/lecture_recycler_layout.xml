@@ -38,38 +38,54 @@
             android:textColor="@color/gray_text"
             android:textSize="20sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@id/lockImgView"
+            app:layout_constraintEnd_toStartOf="@id/myProgressBar"
             app:layout_constraintStart_toEndOf="@id/indexText"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:visibility="gone"
+            android:id="@+id/overlayImg"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/ic_round_pause_24"
+            app:layout_constraintStart_toStartOf="@id/myProgressBar"
+            app:layout_constraintEnd_toEndOf="@id/myProgressBar"
+            app:layout_constraintTop_toTopOf="@id/myProgressBar"
+            app:layout_constraintBottom_toBottomOf="@id/myProgressBar" />
 
         <ProgressBar
             android:visibility="gone"
             android:id="@+id/myProgressBar"
             style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="28dp"
+            android:layout_width="36dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
             android:layout_height="28dp"
             android:indeterminate="false"
-            android:background="@drawable/circular_shape"
             android:progressDrawable="@drawable/download_progress"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/lockImgView"
             app:layout_constraintTop_toTopOf="parent"
             android:textAlignment="center" />
 
         <ProgressBar
             android:visibility="gone"
             android:id="@+id/progressBarIndet"
-            android:layout_width="28dp"
+            android:layout_width="36dp"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp"
             android:layout_height="28dp"
             android:indeterminate="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/lockImgView"
             app:layout_constraintTop_toTopOf="parent"
             android:textAlignment="center" />
 
         <ImageView
             android:id="@+id/lockImgView"
-            android:layout_width="28dp"
+            android:layout_width="40dp"
+            android:paddingEnd="4dp"
+            android:paddingStart="8dp"
             android:layout_height="28dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

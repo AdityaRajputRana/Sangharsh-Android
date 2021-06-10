@@ -3,6 +3,8 @@ package com.adityarana.sangharsh.learning.sangharsh.Tools;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.adityarana.sangharsh.learning.sangharsh.Model.SubCategory;
 import com.adityarana.sangharsh.learning.sangharsh.Model.Video;
@@ -33,6 +35,27 @@ public class Utils {
     public interface Listener{
         void downloaded(Video video);
         void changeProgress(int progress, Video video);
+    }
+
+    public void deleteFile(Video videoInfo, Context context){
+        SharedPreferences preferences = context.getSharedPreferences("VIDEO_PREF", Context.MODE_PRIVATE);
+        String path = preferences.getString(videoInfo.getId()+"AbsPath", null);
+        if (path != null) {
+            File file = new File(path);
+            if (file.exists()) {
+                if (file.delete()) {
+                    Toast.makeText(context, "Video deleted from the downloads", Toast.LENGTH_SHORT).show();
+                    preferences.edit().remove("is"+videoInfo.getId()+"Downloaded")
+                            .remove(videoInfo.getId()+"Video")
+                            .remove(videoInfo.getId()+"Path")
+                            .remove(videoInfo.getId()+"AbsPath").apply();
+                } else {
+                    Toast.makeText(context, "Video deletion failed!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        } else {
+            Toast.makeText(context, "Some error occurred! Path not found", Toast.LENGTH_SHORT).show();
+        }
     }
 
     public void setTask(Video videoInfo, Context context, Listener listener){
