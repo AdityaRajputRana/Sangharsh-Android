@@ -1,11 +1,13 @@
 package com.adityarana.sangharsh.learning.sangharsh;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -123,7 +125,7 @@ public class ReferActivity extends AppCompatActivity {
         } else {
             processBar = findViewById(R.id.progressBar);
             processBar.setVisibility(View.GONE);
-            processTxt.setText("Now share your code with your friends.\nList of users joined with your code will appear here.");
+            processTxt.setText(getString(R.string.referredAccountHeader));
         }
     }
 
@@ -131,48 +133,48 @@ public class ReferActivity extends AppCompatActivity {
         processLayout.setVisibility(View.VISIBLE);
         processTxt.setText("Loading the list of accounts you referred");
         FirebaseDatabase.getInstance().getReference("referrals")
-        .child(referId)
-        .addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if (snapshot.exists() && snapshot.getValue() != null){
-                    boolean toShow = true;
-                    if (snapshot.child("referred").exists() && snapshot.child("referred") != null) {
-                        HashMap <String, Referral> map = new HashMap<String, Referral>();
-                        for (DataSnapshot x : snapshot.child("referred").getChildren()){
-                            Referral referral = x.getValue(Referral.class);
-                            map.put(x.getKey(), referral);
-                            if (toShow && referral.getPurchaseMade() != null && referral.getPurchaseMade()
-                            && (referral.getRedeemed() == null || !referral.getRedeemed())){
-                                showRedeemBtn();
-                                toShow = false;
+                .child(referId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists() && snapshot.getValue() != null){
+                            boolean toShow = true;
+                            if (snapshot.child("referred").exists() && snapshot.child("referred") != null) {
+                                HashMap <String, Referral> map = new HashMap<String, Referral>();
+                                for (DataSnapshot x : snapshot.child("referred").getChildren()){
+                                    Referral referral = x.getValue(Referral.class);
+                                    map.put(x.getKey(), referral);
+                                    if (toShow && referral.getPurchaseMade() != null && referral.getPurchaseMade()
+                                            && (referral.getRedeemed() == null || !referral.getRedeemed())){
+                                        showRedeemBtn();
+                                        toShow = false;
+                                    }
+                                }
+                                if (map.size() > 0) {
+                                    showReferred(map);
+                                } else {
+                                    processBar = findViewById(R.id.progressBar);
+                                    processBar.setVisibility(View.GONE);
+                                    processTxt.setText(getString(R.string.referredAccountHeader));
+                                }
+                            } else {
+                                processBar = findViewById(R.id.progressBar);
+                                processBar.setVisibility(View.GONE);
+                                processTxt.setText(getString(R.string.referredAccountHeader));
                             }
-                        }
-                        if (map.size() > 0) {
-                            showReferred(map);
                         } else {
+                            Log.i("MyLogs", "List is null");
                             processBar = findViewById(R.id.progressBar);
                             processBar.setVisibility(View.GONE);
-                            processTxt.setText("List of users joined with your code will appear here. Share your code now by pressing the above button.");
+                            processTxt.setText("Something went wrong while talking to the servers");
                         }
-                    } else {
-                        processBar = findViewById(R.id.progressBar);
-                        processBar.setVisibility(View.GONE);
-                        processTxt.setText("List of users joined with your code will appear here. Share your code now by pressing the above button.");
                     }
-                } else {
-                    Log.i("MyLogs", "List is null");
-                    processBar = findViewById(R.id.progressBar);
-                    processBar.setVisibility(View.GONE);
-                    processTxt.setText("Something went wrong while talking to the servers");
-                }
-            }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                processLayout.setVisibility(View.GONE);
-            }
-        });
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        processLayout.setVisibility(View.GONE);
+                    }
+                });
     }
 
     private void showRedeemBtn() {
@@ -314,8 +316,18 @@ public class ReferActivity extends AppCompatActivity {
                         if (task.isSuccessful()){
                             enable();
                             showReferred(mReferrals);
-                            onBackPressed();
-                            Toast.makeText(ReferActivity.this, "We have registered your request. It will be processed as soon as possible", Toast.LENGTH_LONG).show();
+                            new AlertDialog.Builder(ReferActivity.this)
+                                    .setTitle("Request received! 🎉🎉")
+                                    .setMessage(getString(R.string.withdrawalNotice))
+                                    .setPositiveButton(getString(R.string.understand), new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                            dialogInterface.dismiss();
+                                            onBackPressed();
+                                        }
+                                    })
+                                    .setCancelable(true)
+                                    .show();
                         } else {
                             enable();
                             Toast.makeText(ReferActivity.this, "Something went wrong!", Toast.LENGTH_SHORT).show();
@@ -339,7 +351,7 @@ public class ReferActivity extends AppCompatActivity {
             if (x.getPurchaseMade() != null && x.getPurchaseMade() && (x.getRedeemed() == null || !x.getRedeemed())){
                 mReferrals.get(x.getUid()).setRedeemed(true);
                 updates.put("referrals/" + referId + "/referred/" + x.getUid()
-                +"/redeemed", true);
+                        +"/redeemed", true);
             }
         }
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

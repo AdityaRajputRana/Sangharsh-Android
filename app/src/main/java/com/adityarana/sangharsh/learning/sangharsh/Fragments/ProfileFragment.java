@@ -141,7 +141,7 @@ public class ProfileFragment extends Fragment {
     };
 
     private void contactUs() {
-        String[] addresses = new String[]{"harsh6202960665@gmail.com"};
+        String[] addresses = new String[]{Constants.helpMail};
         Intent intent = new Intent(Intent.ACTION_SENDTO);
         intent.setData(Uri.parse("mailto:")); // only email apps should handle this
         intent.putExtra(Intent.EXTRA_EMAIL, addresses);
@@ -156,9 +156,9 @@ public class ProfileFragment extends Fragment {
     private void showPrivacyPolicy() {
         Spanned text;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            text = Html.fromHtml(new Constants().getPrivacyPolicyHTML(), Html.FROM_HTML_MODE_COMPACT);
+            text = Html.fromHtml(Constants.privacyPolicyHtml, Html.FROM_HTML_MODE_COMPACT);
         } else {
-            text = Html.fromHtml(new Constants().getPrivacyPolicyHTML());
+            text = Html.fromHtml(Constants.privacyPolicyHtml);
         }
         new AlertDialog.Builder(getActivity())
                 .setTitle("Privacy Policy")

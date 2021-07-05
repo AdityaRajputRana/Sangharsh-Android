@@ -229,7 +229,7 @@ holds no liability for payments sent to wrong accounts due to your mistakes." />
                 android:id="@+id/infoTxt"
                 android:textAlignment="center"
                 android:textColor="@color/gray_text"
-                android:text="Earn money by telling everyone about Sangharsh.\nYou will be able to redeem your rewards once your friends makes a purchase" />
+                android:text="@string/referrHeader"/>
 
             <LinearLayout
                 android:id="@+id/referralLayout"
