@@ -5,15 +5,28 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentValues;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.TextureView;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.adityarana.sangharsh.learning.sangharsh.Model.Video;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -29,7 +42,12 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.gson.Gson;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Objects;
 
 
 public class PlayerActivity extends AppCompatActivity {
@@ -102,6 +120,77 @@ public class PlayerActivity extends AppCompatActivity {
         }
     }
 
+    private void takeScreenshot() {
+        Log.i("Screenshot", "starting");
+        Date now = new Date();
+        String date = (String) android.text.format.DateFormat.format("yyyy-MM-dd_hh.mm.ss", now);
+
+        try {
+            TextureView textureView = (TextureView) playerView.getVideoSurfaceView();
+            Bitmap bitmap = textureView.getBitmap();
+            Uri mImg;
+
+            OutputStream fos;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                ContentResolver resolver = getContentResolver();
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, "IMG"+ date + ".jpg");
+                contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg");
+                contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/Sangharsh/");
+                Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+                mImg = imageUri;
+                fos = resolver.openOutputStream(Objects.requireNonNull(imageUri));
+            } else {
+                File pix = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES);
+                File myDir = new File(pix + "/Sangharsh/");
+                if (!myDir.exists()){
+                    myDir.mkdirs();
+                }
+                File imageFile = new File(myDir, "IMG"+date+".jpg");
+                fos = new FileOutputStream(imageFile);
+                mImg = Uri.fromFile(imageFile);
+            }
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            Objects.requireNonNull(fos).close();
+
+            int quality = 100;
+            showToast(bitmap, mImg);
+            Log.i("Screenshot", "captured");
+        } catch (Throwable e) {
+            // Several error may come out with file handling or DOM
+            e.printStackTrace();
+            Log.i("Screenshot", "failed");
+
+        }
+    }
+
+    private void showToast(Bitmap bitmap, Uri uri) {
+        LayoutInflater inflater = getLayoutInflater();
+        View view = inflater.inflate(R.layout.image_toast,
+                (ViewGroup)findViewById(R.id.relativeLayout1));
+
+        ImageView imageView = view.findViewById(R.id.imageView);
+        imageView.setImageBitmap(bitmap);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openScreenshot(uri);
+                Log.i("Screenshot", "toast clicked");
+            }
+        });
+        Toast toast = new Toast(this);
+        toast.setView(view);
+        toast.show();
+        Log.i("Screenshot", "toast shown");
+    }
+
+    private void openScreenshot(Uri uri) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setDataAndType(uri, "image/*");
+        startActivity(intent);
+    }
+
     private void getDataFromDB(Video videoInfo) {
         String category = videoInfo.getCategory();
         String subcat = videoInfo.getSubcat();
@@ -131,10 +220,10 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     private void initialisePlayer(String url){
-            playerView = findViewById(R.id.video_view);
-            player = new SimpleExoPlayer.Builder(this).build();
-            playerView.setPlayer(player);
-            player.setPlayWhenReady(true);
+        playerView = findViewById(R.id.video_view);
+        player = new SimpleExoPlayer.Builder(this).build();
+        playerView.setPlayer(player);
+        player.setPlayWhenReady(true);
         Uri uri = Uri.parse(url);
         MediaSource source = buildMediaSource(uri);
         player.prepare(source);
@@ -160,6 +249,18 @@ public class PlayerActivity extends AppCompatActivity {
                 PlayerActivity.this.finish();
             }
         });
+
+        playerView.findViewById(R.id.screen_shot)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!player.isLoading()){
+                            takeScreenshot();
+                        } else {
+                            Toast.makeText(PlayerActivity.this, "Let the video load before capturing the screenshot", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
 
         speedControls = findViewById(R.id.speedLayout);
         speedText = playerView.findViewById(R.id.speedTxt);
@@ -241,12 +342,12 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     private void releasePlayer(){
-            if (player != null) {
-                playbackPosition = player.getCurrentPosition();
-                currentWindow = player.getCurrentWindowIndex();
-                playWhenReady = player.getPlayWhenReady();
-                player.release();
-                player = null;
-            }
+        if (player != null) {
+            playbackPosition = player.getCurrentPosition();
+            currentWindow = player.getCurrentWindowIndex();
+            playWhenReady = player.getPlayWhenReady();
+            player.release();
+            player = null;
         }
     }
+}

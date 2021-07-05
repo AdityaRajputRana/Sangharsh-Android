@@ -19,9 +19,10 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginRight="5dp"
-        app:layout_constraintEnd_toStartOf="@+id/cross_im"
+        app:layout_constraintBottom_toBottomOf="@id/cross_im"
+        app:layout_constraintEnd_toStartOf="@+id/screen_shot"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+          app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/header_tv"
@@ -32,8 +33,8 @@
             android:maxLines="2"
             android:paddingLeft="20dp"
             android:textColor="@color/white"
-            android:fontFamily="@font/gilroy_light"
-            android:textSize="16sp"
+            android:fontFamily="@font/poppins"
+            android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_max="wrap"
@@ -45,13 +46,25 @@
 
     <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/cross_im"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
         android:layout_gravity=""
         android:layout_marginTop="20dp"
         android:layout_marginEnd="20dp"
         android:src="@drawable/ic_outline_cancel_24"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/screen_shot"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_gravity=""
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:src="@drawable/ic_icon_screenshot"
+        app:layout_constraintEnd_toStartOf="@id/cross_im"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.Barrier
