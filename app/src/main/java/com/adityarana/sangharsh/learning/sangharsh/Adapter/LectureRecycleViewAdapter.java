@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.adityarana.sangharsh.learning.sangharsh.Model.Video;
 import com.adityarana.sangharsh.learning.sangharsh.R;
 import com.adityarana.sangharsh.learning.sangharsh.Tools.Utils;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.StorageTask;
 import com.squareup.picasso.Picasso;

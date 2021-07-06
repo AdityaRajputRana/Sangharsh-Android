@@ -1,9 +1,11 @@
 package com.adityarana.sangharsh.learning.sangharsh.Tools;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.Uri;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -13,6 +15,7 @@ import com.adityarana.sangharsh.learning.sangharsh.Model.Video;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
@@ -30,6 +33,28 @@ import androidx.annotation.NonNull;
 
 
 public class Utils {
+
+    public static void report(int errorCode, String log, Exception e, String uid, String email, String extra){
+        FirebaseCrashlytics crashlytics = FirebaseCrashlytics.getInstance();
+        crashlytics.log(log);
+        crashlytics.setUserId(uid);
+        crashlytics.setCustomKey("extra", extra);
+        crashlytics.setCustomKey("email", email);
+        crashlytics.setCustomKey("code", errorCode);
+        crashlytics.recordException(e);
+        crashlytics.sendUnsentReports();
+    }
+
+    public static void sendMail(Context context, String subject, String message){
+        String[] addresses = new String[]{Constants.helpMail};
+        Intent intent = new Intent(Intent.ACTION_SENDTO);
+        intent.setData(Uri.parse("mailto:")); // only email apps should handle this
+        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        intent.putExtra(Intent.EXTRA_TEXT, message);
+        context.startActivity(intent);
+    }
+
 
     public static HashMap<String, StorageTask<FileDownloadTask.TaskSnapshot>> taskMap;
     public static HashMap<String, File> tempFiles;

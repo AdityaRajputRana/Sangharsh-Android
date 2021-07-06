@@ -24,9 +24,14 @@ import com.adityarana.sangharsh.learning.sangharsh.Fragments.HomeFragment;
 import com.adityarana.sangharsh.learning.sangharsh.Model.HomeCategory;
 import com.adityarana.sangharsh.learning.sangharsh.Model.HomeDocument;
 import com.adityarana.sangharsh.learning.sangharsh.Model.User;
+import com.adityarana.sangharsh.learning.sangharsh.Tools.Utils;
+import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.BaseTransientBottomBar;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -176,7 +181,7 @@ public class MainActivity extends AppCompatActivity implements BannerFragment.Li
                 .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                     @Override
                     public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                        if (task.isSuccessful() && task.getResult().exists()) {
+                        if (task.isSuccessful() && Objects.requireNonNull(task.getResult()).exists()) {
                             User mUser = task.getResult().toObject(User.class);
                             if (mUser.getPurchasedCourses() != null) {
                                 Log.i("Purchased", "These are null");
@@ -190,11 +195,69 @@ public class MainActivity extends AppCompatActivity implements BannerFragment.Li
                         } else {
                             purchased = new ArrayList<String>();
                             Log.i("Error:Purchased ", String.valueOf(task.getException()));
-                            Toast.makeText(MainActivity.this, "Some error occurred! Check your connection", Toast.LENGTH_SHORT).show();
-                            Toast.makeText(MainActivity.this, "Something went wrong " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            if (task.getException() != null){
+                                Toast.makeText(MainActivity.this, "Something went wrong " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
+                                Snackbar.make(MainActivity.this.getWindow().getDecorView().getRootView(), "Something went wrong:"+task.getException().getMessage(), BaseTransientBottomBar.LENGTH_INDEFINITE)
+                                        .setAction("Report", new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                Utils.report(0, "Downloading user purchases",
+                                                        task.getException(), user.getUid(), user.getEmail(), task.getException().getMessage());
+                                            }
+                                        });
+                            } else if (task.getResult() == null || !task.getResult().exists()){
+                                Utils.report(1, "Downloading user purchases",
+                                        new Exception(), user.getUid(), user.getEmail(), "User data is not found");
+                                Snackbar.make(MainActivity.this.getWindow().getDecorView().getRootView(), "Something went wrong:Your account specific data is missing on the server. Either create new accout data by clicking Create now, Or, you can contact us", BaseTransientBottomBar.LENGTH_INDEFINITE)
+                                        .setAction("Create now", new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                createNewAccountData();
+                                            }
+                                        })
+                                        .setAction("Contact Us", new View.OnClickListener() {
+                                            @Override
+                                            public void onClick(View view) {
+                                                Utils.sendMail(MainActivity.this, "My data is not availabe", "Hello Sangharsh team, My data is missing on the servers\n Here " +
+                                                        "are my details:" +
+                                                        "UID:"+ user.getUid()
+                                                + "Emails-Phone:" + user.getEmail() + user.getPhoneNumber());
+                                            }
+                                        });
+                            }
+                            Toast.makeText(MainActivity.this, "Some error occurred!", Toast.LENGTH_SHORT).show();
                             if (homeDocument != null && toSetUp) {
                                 setCourcesUI();
                             }
+                        }
+                    }
+                })
+        .addOnCanceledListener(new OnCanceledListener() {
+            @Override
+            public void onCanceled() {
+                Toast.makeText(MainActivity.this, "Request cancelled by the server.", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    private void createNewAccountData() {
+        FirebaseUser fuser = FirebaseAuth.getInstance().getCurrentUser();
+        User user = new User();
+        user.setUid(fuser.getUid());
+        String androidId = "" + android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
+        user.setLoginUUID(androidId);
+        FirebaseFirestore.getInstance()
+                .collection("Users")
+                .document(fuser.getUid())
+                .set(user)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            Toast.makeText(MainActivity.this, "Account created successfully!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(MainActivity.this, "Some error occured! " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

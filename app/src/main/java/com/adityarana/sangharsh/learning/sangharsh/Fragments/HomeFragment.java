@@ -70,7 +70,9 @@ public class HomeFragment extends Fragment implements HomeRecyclerViewAdapter.Li
     }
     public void setHome(HomeDocument homeDocument, ArrayList<String> purchased){
         this.purchased = purchased;
-
+        if (this.purchased == null){
+            this.purchased = new ArrayList<String>();
+        }
         purchasedCats = new ArrayList<HomeCategory>();
         if (homeDocument != null && homeDocument.getCourses() != null && homeDocument.getCourses().size() > 0) {
             for (HomeCategory category : homeDocument.getCourses()) {
