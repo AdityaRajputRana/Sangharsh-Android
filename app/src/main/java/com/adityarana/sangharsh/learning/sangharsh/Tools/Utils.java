@@ -2,6 +2,8 @@ package com.adityarana.sangharsh.learning.sangharsh.Tools;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -35,6 +37,13 @@ public class Utils {
     public interface Listener{
         void downloaded(Video video);
         void changeProgress(int progress, Video video);
+    }
+
+    public static boolean isNetworkAvailable(Context context) {
+        ConnectivityManager connectivityManager
+                = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     public void deleteFile(Video videoInfo, Context context){

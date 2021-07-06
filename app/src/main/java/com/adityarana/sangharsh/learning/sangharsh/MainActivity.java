@@ -39,6 +39,7 @@ import com.razorpay.Checkout;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class MainActivity extends AppCompatActivity implements BannerFragment.Listener {
 
@@ -187,7 +188,8 @@ public class MainActivity extends AppCompatActivity implements BannerFragment.Li
                         } else {
                             purchased = new ArrayList<String>();
                             Log.i("Error:Purchased ", String.valueOf(task.getException()));
-                            Toast.makeText(MainActivity.this, "Something went wrong " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, "Some error occurred! Check your connection", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Something went wrong " + Objects.requireNonNull(task.getException()).getMessage(), Toast.LENGTH_LONG).show();
                             if (homeDocument != null && toSetUp) {
                                 setCourcesUI();
                             }
