@@ -58,6 +58,8 @@ public class MainActivity extends AppCompatActivity implements BannerFragment.Li
 
         checkNewLogin();
         Checkout.preload(getApplicationContext());
+
+        ((MyApp) this.getApplication()).startListening(this);
     }
 
     private void checkNewLogin() {

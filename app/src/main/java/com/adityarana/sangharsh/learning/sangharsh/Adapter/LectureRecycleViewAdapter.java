@@ -16,6 +16,8 @@ import android.widget.Toast;
 import com.adityarana.sangharsh.learning.sangharsh.Model.Video;
 import com.adityarana.sangharsh.learning.sangharsh.R;
 import com.adityarana.sangharsh.learning.sangharsh.Tools.Utils;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.StorageTask;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -26,7 +28,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.recyclerview.widget.RecyclerView;
-import okhttp3.internal.Util;
+
+import static com.adityarana.sangharsh.learning.sangharsh.Tools.Utils.taskMap;
 
 public class LectureRecycleViewAdapter extends RecyclerView.Adapter<LectureRecycleViewAdapter.LectureViewHolder>
         implements Utils.Listener{
@@ -144,9 +147,17 @@ public class LectureRecycleViewAdapter extends RecyclerView.Adapter<LectureRecyc
                                     @Override
                                     public void onClick(DialogInterface dialogInterface, int i) {
                                         dialogInterface.dismiss();
-                                        if (Utils.taskMap.containsKey(videos.get(position).getId())) {
-                                            Objects.requireNonNull(Utils.taskMap.get(videos.get(position).getId())).cancel();
-                                            Utils.taskMap.remove(videos.get(position).getId());
+                                        Log.i("DeleteProcess", "Starting");
+                                        if (taskMap.containsKey(videos.get(position).getId())) {
+                                            Log.i("DeleteProcess", "Current download");
+                                            if (!taskMap.get(videos.get(position).getId()).isPaused()){
+                                                holder.overlayBtn.performClick();
+                                                Log.i("DeleteProcess", "Paused the task");
+                                            }
+                                            Log.i("DeleteProcess", "Video position and id" + String.valueOf(position) +videos.get(position).getId());
+                                            StorageTask<FileDownloadTask.TaskSnapshot> storageTask = taskMap.get(videos.get(position).getId());
+                                            storageTask.cancel();
+                                            taskMap.remove(videos.get(position).getId());
                                             Utils.tempFiles.remove(videos.get(position).getId());
                                             hashMap.remove(videos.get(position).getId());
                                             indetHashMap.remove(videos.get(position).getId());
@@ -155,6 +166,13 @@ public class LectureRecycleViewAdapter extends RecyclerView.Adapter<LectureRecyc
                                             holder.lockImgView.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_baseline_download_24));
                                             holder.lockImgView.setOnClickListener(mListener);
                                             holder.lockImgView.setVisibility(View.VISIBLE);
+
+                                            if (taskMap.containsKey(videos.get(position).getId())){
+                                                Log.i("DeleteProcess", "Not deleted");
+                                            } else {
+                                                Log.i("DeleteProcess", "Deteled success");
+                                                taskMap.remove(videos.get(position).getId());
+                                            }
                                         } else {
                                             new Utils().deleteFile(videos.get(position), activity);
                                             holder.lockImgView.setOnClickListener(mListener);
@@ -198,8 +216,8 @@ public class LectureRecycleViewAdapter extends RecyclerView.Adapter<LectureRecyc
                     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
                     @Override
                     public void onClick(View view) {
-                        if (Objects.requireNonNull(Utils.taskMap.get(videos.get(position).getId()).isPaused())){
-                            Objects.requireNonNull(Utils.taskMap.get(videos.get(position).getId())).resume();
+                        if (Objects.requireNonNull(taskMap.get(videos.get(position).getId()).isPaused())){
+                            Objects.requireNonNull(taskMap.get(videos.get(position).getId())).resume();
 
                             if (activity != null){
                                 Toast.makeText(activity, "Download resumed!", Toast.LENGTH_SHORT).show();
@@ -207,7 +225,7 @@ public class LectureRecycleViewAdapter extends RecyclerView.Adapter<LectureRecyc
                             }
 
                         } else {
-                            Objects.requireNonNull(Utils.taskMap.get(videos.get(position).getId())).pause();
+                            Objects.requireNonNull(taskMap.get(videos.get(position).getId())).pause();
 
                             if (activity != null){
                                 Toast.makeText(activity, "Download paused!", Toast.LENGTH_SHORT).show();
@@ -217,7 +235,7 @@ public class LectureRecycleViewAdapter extends RecyclerView.Adapter<LectureRecyc
                     }
                 });
 
-                if (Utils.taskMap != null && Utils.taskMap.containsKey(videos.get(position).getId())){
+                if (taskMap != null && taskMap.containsKey(videos.get(position).getId())){
                     hashMap.put(videos.get(position).getId(), holder.lockImgView);
                     holder.lockImgView.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_round_delete_24));
                     holder.lockImgView.setOnClickListener(listener1);
@@ -225,7 +243,7 @@ public class LectureRecycleViewAdapter extends RecyclerView.Adapter<LectureRecyc
                     hashMap.put(videos.get(position).getId(), holder.lockImgView);
                     progressBarHashMap.put(videos.get(position).getId(), holder.progressBar);
 
-                    if (Objects.requireNonNull(Utils.taskMap.get(videos.get(position).getId())).getSnapshot().getTotalByteCount() != 0 && Utils.taskMap.get(videos.get(position).getId()).getSnapshot().getBytesTransferred()/Utils.taskMap.get(videos.get(position).getId()).getSnapshot().getTotalByteCount() <= 0.01){
+                    if (Objects.requireNonNull(taskMap.get(videos.get(position).getId())).getSnapshot().getTotalByteCount() != 0 && taskMap.get(videos.get(position).getId()).getSnapshot().getBytesTransferred()/ taskMap.get(videos.get(position).getId()).getSnapshot().getTotalByteCount() <= 0.01){
                         lockImageHM.put(videos.get(position).getId(), holder.lockImgView);
                         holder.lockImgView.setVisibility(View.GONE);
                         indetHashMap.put(videos.get(position).getId(), holder.progressBarIndet);
@@ -237,12 +255,13 @@ public class LectureRecycleViewAdapter extends RecyclerView.Adapter<LectureRecyc
 
                     resumeDownload(videos.get(position));
 
-                    if (Utils.taskMap.get(videos.get(position).getId()).isPaused()){
+                    if (taskMap.get(videos.get(position).getId()).isPaused()){
                         holder.progressBarIndet.setVisibility(View.GONE);
                         holder.progressBar.setVisibility(View.VISIBLE);
                         if (activity != null){
                             holder.overlayBtn.setImageDrawable(activity.getResources().getDrawable(R.drawable.ic_round_play_arrow_24));
                         }
+                        holder.lockImgView.setVisibility(View.VISIBLE);
                     }
                 }
             }

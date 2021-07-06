@@ -109,10 +109,26 @@ public class LoginActivity extends AppCompatActivity {
         setGoogleLoginBtn();
         setGoogleLogin();
         setPhoneAuth();
-
         setEmailLogin();
+
+        checkExtras();
     }
 
+    private void checkExtras() {
+        if (getIntent().getBooleanExtra("isMsgIncluded", false)){
+            new AlertDialog.Builder(this)
+                    .setTitle(getIntent().getStringExtra("title"))
+                    .setMessage(getIntent().getStringExtra("message"))
+                    .setCancelable(true)
+                    .setPositiveButton("Okay", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            dialogInterface.dismiss();
+                        }
+                    })
+                    .show();
+        }
+    }
 
 
     private void setEmailLogin() {
