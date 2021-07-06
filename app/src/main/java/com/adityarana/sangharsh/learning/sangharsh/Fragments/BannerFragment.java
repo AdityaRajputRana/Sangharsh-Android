@@ -24,6 +24,9 @@ public class BannerFragment extends Fragment {
     String subcategory;
     Listener listener;
 
+    public BannerFragment() {
+    }
+
     public interface Listener{
         void startCatActivity(String category);
     }

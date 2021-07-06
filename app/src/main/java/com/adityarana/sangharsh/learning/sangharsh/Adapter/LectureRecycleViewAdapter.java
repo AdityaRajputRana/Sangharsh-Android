@@ -225,7 +225,7 @@ public class LectureRecycleViewAdapter extends RecyclerView.Adapter<LectureRecyc
                     hashMap.put(videos.get(position).getId(), holder.lockImgView);
                     progressBarHashMap.put(videos.get(position).getId(), holder.progressBar);
 
-                    if (Utils.taskMap.get(videos.get(position).getId()).getSnapshot().getBytesTransferred()/Utils.taskMap.get(videos.get(position).getId()).getSnapshot().getBytesTransferred() <= 0.01){
+                    if (Objects.requireNonNull(Utils.taskMap.get(videos.get(position).getId())).getSnapshot().getTotalByteCount() != 0 && Utils.taskMap.get(videos.get(position).getId()).getSnapshot().getBytesTransferred()/Utils.taskMap.get(videos.get(position).getId()).getSnapshot().getTotalByteCount() <= 0.01){
                         lockImageHM.put(videos.get(position).getId(), holder.lockImgView);
                         holder.lockImgView.setVisibility(View.GONE);
                         indetHashMap.put(videos.get(position).getId(), holder.progressBarIndet);
