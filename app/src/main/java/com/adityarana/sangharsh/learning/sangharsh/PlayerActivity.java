@@ -39,6 +39,7 @@ import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.gson.Gson;
 
@@ -72,6 +73,7 @@ public class PlayerActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
+        Log.i("Player", "on pause called");
         super.onPause();
         if (player != null) {
             player.setPlayWhenReady(false);
@@ -81,6 +83,7 @@ public class PlayerActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        Log.i("Player", "on resume called");
         super.onResume();
         if (getRequestedOrientation() != ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE){
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
@@ -90,25 +93,111 @@ public class PlayerActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+
         setContentView(R.layout.activity_player);
 
         progressBar = findViewById(R.id.progressBar);
 
-
         videoInfo = new Gson().fromJson(getIntent().getStringExtra("VIDEO"),
                 Video.class);
         myPref = this.getSharedPreferences("VIDEO_PREF", MODE_PRIVATE);
+
+        setUpPlayer();
         if (myPref.getBoolean("is"+videoInfo.getId()+"Downloaded", false)){
             getDataFromLocal(videoInfo);
         } else {
             getDataFromDB(videoInfo);
         }
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE);
+
+    }
+
+    private void setUpPlayer() {
+        playerView = findViewById(R.id.video_view);
+        player = new SimpleExoPlayer.Builder(this).build();
+        playerView.setPlayer(player);
+        player.setPlayWhenReady(true);
+
+        player.addListener(new Player.EventListener() {
+            @Override
+            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                switch (playbackState){
+                    case Player.STATE_BUFFERING:
+                        progressBar.setVisibility(View.VISIBLE);
+                        break;
+                    case Player.STATE_READY:
+                        progressBar.setVisibility(View.GONE);
+                        break;
+                }
+            }
+        });
+
+        playerView.findViewById(R.id.cross_im).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                player.stop();
+                PlayerActivity.this.finish();
+            }
+        });
+
+        playerView.findViewById(R.id.screen_shot)
+                .setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!player.isLoading()){
+                            takeScreenshot();
+                        } else {
+                            Toast.makeText(PlayerActivity.this, "Let the video load before capturing the screenshot", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+        setUpSpeedControls();
+    }
+
+    private void setUpSpeedControls() {
+
+        speedControls = findViewById(R.id.speedLayout);
+        speedText = playerView.findViewById(R.id.speedTxt);
+
+        speedBtns = new ArrayList<TextView>();
+
+        speedBtns.add(findViewById(R.id.speed0));
+        speedBtns.add(findViewById(R.id.speed1));
+        speedBtns.add(findViewById(R.id.speed2));
+        speedBtns.add(findViewById(R.id.speed3));
+        speedBtns.add(findViewById(R.id.speed4));
+
+        speeds = new ArrayList<Float>();
+        speeds.add(0.25f);
+        speeds.add(0.5f);
+        speeds.add(1f);
+        speeds.add(1.5f);
+        speeds.add(2f);
+
+        speedText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                speedControls.setVisibility(View.VISIBLE);
+                state = 1;
+            }
+        });
+
+        speedControls.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                speedControls.setVisibility(View.GONE);
+                state = 0;
+            }
+        });
     }
 
     private void getDataFromLocal(Video videoInfo) {
@@ -153,7 +242,6 @@ public class PlayerActivity extends AppCompatActivity {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
             Objects.requireNonNull(fos).close();
 
-            int quality = 100;
             showToast(bitmap, mImg);
             Log.i("Screenshot", "captured");
         } catch (Throwable e) {
@@ -181,10 +269,12 @@ public class PlayerActivity extends AppCompatActivity {
         Toast toast = new Toast(this);
         toast.setView(view);
         toast.show();
-        Log.i("Screenshot", "toast shown");
     }
 
     private void openScreenshot(Uri uri) {
+        if (player.isPlaying()){
+            player.setPlayWhenReady(false);
+        }
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_VIEW);
         intent.setDataAndType(uri, "image/*");
@@ -220,81 +310,11 @@ public class PlayerActivity extends AppCompatActivity {
     }
 
     private void initialisePlayer(String url){
-        playerView = findViewById(R.id.video_view);
-        player = new SimpleExoPlayer.Builder(this).build();
-        playerView.setPlayer(player);
-        player.setPlayWhenReady(true);
-        Uri uri = Uri.parse(url);
-        MediaSource source = buildMediaSource(uri);
-        player.prepare(source);
-
-        player.addListener(new Player.EventListener() {
-            @Override
-            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-                switch (playbackState){
-                    case Player.STATE_BUFFERING:
-                        progressBar.setVisibility(View.VISIBLE);
-                        break;
-                    case Player.STATE_READY:
-                        progressBar.setVisibility(View.GONE);
-                        break;
-                }
-            }
-        });
-
-        playerView.findViewById(R.id.cross_im).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                player.stop();
-                PlayerActivity.this.finish();
-            }
-        });
-
-        playerView.findViewById(R.id.screen_shot)
-                .setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        if (!player.isLoading()){
-                            takeScreenshot();
-                        } else {
-                            Toast.makeText(PlayerActivity.this, "Let the video load before capturing the screenshot", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-
-        speedControls = findViewById(R.id.speedLayout);
-        speedText = playerView.findViewById(R.id.speedTxt);
-
-        speedBtns = new ArrayList<TextView>();
-
-        speedBtns.add(findViewById(R.id.speed0));
-        speedBtns.add(findViewById(R.id.speed1));
-        speedBtns.add(findViewById(R.id.speed2));
-        speedBtns.add(findViewById(R.id.speed3));
-        speedBtns.add(findViewById(R.id.speed4));
-
-        speeds = new ArrayList<Float>();
-        speeds.add(0.25f);
-        speeds.add(0.5f);
-        speeds.add(1f);
-        speeds.add(1.5f);
-        speeds.add(2f);
-
-        speedText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                speedControls.setVisibility(View.VISIBLE);
-                state = 1;
-            }
-        });
-
-        speedControls.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                speedControls.setVisibility(View.GONE);
-                state = 0;
-            }
-        });
+        if (player != null) {
+            Uri uri = Uri.parse(url);
+            MediaSource source = buildMediaSource(uri);
+            player.prepare(source);
+        }
     }
 
     @Override
