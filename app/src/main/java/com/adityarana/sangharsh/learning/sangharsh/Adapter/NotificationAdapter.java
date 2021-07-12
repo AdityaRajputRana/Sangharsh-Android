@@ -9,6 +9,8 @@ import android.widget.TextView;
 import com.adityarana.sangharsh.learning.sangharsh.Model.Notifications.Notification;
 import com.adityarana.sangharsh.learning.sangharsh.R;
 import com.adityarana.sangharsh.learning.sangharsh.Tools.RoundedCornersTransformation;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -22,10 +24,17 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
 
     private ArrayList<Notification> notifications;
     private Date date;
+    private String userName;
 
     public NotificationAdapter(ArrayList<Notification> notifications) {
         this.notifications = notifications;
         date = new Date();
+        if (FirebaseAuth.getInstance().getCurrentUser().getDisplayName() != null &&
+                !FirebaseAuth.getInstance().getCurrentUser().getDisplayName().isEmpty()) {
+            userName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
+        } else {
+            userName = "user";
+        }
     }
 
     @NonNull
@@ -39,12 +48,14 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
         Notification mNotif = notifications.get(position);
 
         if (mNotif.getTitle() != null && !mNotif.getTitle().isEmpty()){
+            mNotif.setTitle(mNotif.getTitle().replace("{user_name}", userName));
             holder.titleTxt.setText(mNotif.getTitle());
         } else {
             holder.titleTxt.setVisibility(View.GONE);
         }
 
         if (mNotif.getMessage() != null && !mNotif.getMessage().isEmpty()){
+            mNotif.setMessage(mNotif.getMessage().replace("{user_name}", userName));
             holder.messageTxt.setText(mNotif.getMessage());
         } else {
             holder.messageTxt.setVisibility(View.GONE);

@@ -3,15 +3,23 @@ apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('C:\\Users\\aditya rana\\Sangharsh\\newsign.jks')
+            storePassword 'sangharsh@123'
+            keyPassword 'sangharsh@123'
+            keyAlias 'key0'
+        }
+    }
     compileSdkVersion 29
 
     defaultConfig {
         vectorDrawables.useSupportLibrary = true
-        applicationId "com.sangharsh.learning"
+        applicationId "com.sangharsh"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 6
-        versionName "1.6.10"
+        versionCode 1
+        versionName "1.0.0"
         multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -25,6 +33,8 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            debuggable false
+            signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }

@@ -11,14 +11,14 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string name="app_id">ca-app-pub-6764809003226506~9017874115</string>
-    <!--        <string name="banner">ca-app-pub-6764809003226506/7513220753</string>-->
-    <!--        <string name="interstitial">ca-app-pub-6764809003226506/8228919515</string>-->
+            <string name="banner">ca-app-pub-6764809003226506/7513220753</string>
+            <string name="interstitial">ca-app-pub-6764809003226506/8228919515</string>
 
-    <string name="banner">ca-app-pub-3940256099942544/6300978111</string>
-    <string name="interstitial">ca-app-pub-3940256099942544/1033173712</string>
+<!--    <string name="banner">ca-app-pub-3940256099942544/6300978111</string>-->
+<!--    <string name="interstitial">ca-app-pub-3940256099942544/1033173712</string>-->
 
     <string name="understand">I understand/मै समझ गया</string>
-    <string name="referrHeader">संघर्ष के बारे में सबको बताकर पैसा कमाओ। आप अपने उन पुरस्कारों को भुनाने में सक्षम होंगे जिन्हें आपके मित्र खरीदारी करते हैं</string>
+    <string name="referrHeader">संघर्ष के बारे में सबको बताकर 100 रुपए कमाओ। आप अपने उन रुपए को निकालने में सक्षम होंगे जिनसे आपके मित्र खरीदारी करते हैं</string>
     <string name="referredAccountHeader">आपके कोड से जुड़े हुए उपयोगकर्ताओं की सूची यहां दिखाई देगी, उपरोक्त बटन दबाकर अपना कोड साझा करें</string>
     <string name="withdrawalNotice">कृपया प्रतीक्षा करें ; हमारी टीम आपके लिए प्रतिबद्ध है ; समीक्षा के तुरंत बाद ( 24 घंटे के अंदर)  ही आपको आपकी राशि का भुगतान कर दिया जाएगा</string>
     <string name="noDoubtAccess">आपने कोई  कोर्स नहीं खरीदा है।\n\nकेवल वे उपयोगकर्ता जिन्होंने कम से कम एक कोर्स खरीदा है, हमसे मदद ले सकते हैं । यह बॉट और स्पैमर को हमारे प्रीमियम इनबॉक्स में आने से रोकने के लिए है।</string>
