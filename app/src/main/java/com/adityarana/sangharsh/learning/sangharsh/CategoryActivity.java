@@ -40,6 +40,7 @@ import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -50,6 +51,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.inappmessaging.FirebaseInAppMessaging;
 import com.google.gson.Gson;
 import com.razorpay.Checkout;
 import com.razorpay.PaymentResultListener;
@@ -439,6 +441,17 @@ public class CategoryActivity extends AppCompatActivity implements CategoryRecyc
                 }
             }
         });
+
+        FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
+        FirebaseInAppMessaging.getInstance().triggerEvent("purchase");
+        FirebaseInAppMessaging.getInstance().triggerEvent("purchase_" + category.getId());
+        FirebaseAnalytics mAnalytics = FirebaseAnalytics.getInstance(CategoryActivity.this);
+        mAnalytics.setUserId(firebaseUser.getUid());
+        Bundle bundle = new Bundle();
+        bundle.putString("uid", firebaseUser.getUid());
+        bundle.putString("purchase", "success");
+        bundle.putString("category", category.getId());
+        mAnalytics.logEvent("purchase", bundle);
     }
 
     private void enableEverything() {

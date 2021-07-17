@@ -39,6 +39,7 @@ import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.inappmessaging.FirebaseInAppMessaging;
 import com.google.gson.Gson;
 import com.razorpay.Checkout;
 
@@ -63,6 +64,8 @@ public class MainActivity extends AppCompatActivity implements BannerFragment.Li
 
         checkNewLogin();
         Checkout.preload(getApplicationContext());
+
+        FirebaseInAppMessaging.getInstance().triggerEvent("main_act_launched");
 
         ((MyApp) this.getApplication()).startListening(this);
     }
