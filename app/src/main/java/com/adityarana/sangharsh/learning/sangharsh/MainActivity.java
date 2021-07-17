@@ -205,26 +205,32 @@ public class MainActivity extends AppCompatActivity implements BannerFragment.Li
                                                 Utils.report(0, "Downloading user purchases",
                                                         task.getException(), user.getUid(), user.getEmail(), task.getException().getMessage());
                                             }
-                                        });
+                                        }).show();
                             } else if (task.getResult() == null || !task.getResult().exists()){
                                 Utils.report(1, "Downloading user purchases",
                                         new Exception(), user.getUid(), user.getEmail(), "User data is not found");
-                                Snackbar.make(MainActivity.this.getWindow().getDecorView().getRootView(), "Something went wrong:Your account specific data is missing on the server. Either create new accout data by clicking Create now, Or, you can contact us", BaseTransientBottomBar.LENGTH_INDEFINITE)
-                                        .setAction("Create now", new View.OnClickListener() {
+
+                                new AlertDialog.Builder(MainActivity.this)
+                                        .setTitle("Something went wrong")
+                                        .setMessage("Your account specific data is missing on the server. Either create new accout data by clicking Create now, " +
+                                                "Or, you can contact us")
+                                        .setCancelable(false)
+                                        .setPositiveButton("Create now", new DialogInterface.OnClickListener() {
                                             @Override
-                                            public void onClick(View view) {
+                                            public void onClick(DialogInterface dialogInterface, int i) {
                                                 createNewAccountData();
+                                                dialogInterface.dismiss();
                                             }
                                         })
-                                        .setAction("Contact Us", new View.OnClickListener() {
+                                        .setNegativeButton("Contact Us", new DialogInterface.OnClickListener() {
                                             @Override
-                                            public void onClick(View view) {
+                                            public void onClick(DialogInterface dialogInterface, int i) {
                                                 Utils.sendMail(MainActivity.this, "My data is not availabe", "Hello Sangharsh team, My data is missing on the servers\n Here " +
-                                                        "are my details:" +
-                                                        "UID:"+ user.getUid()
-                                                + "Emails-Phone:" + user.getEmail() + user.getPhoneNumber());
+                                                        "are my details:\n" +
+                                                        "\nUID:"+ user.getUid()
+                                                        + "\nEmails-Phone:" + user.getEmail() + "-" + user.getPhoneNumber());
                                             }
-                                        });
+                                        }).show();
                             }
                             Toast.makeText(MainActivity.this, "Some error occurred!", Toast.LENGTH_SHORT).show();
                             if (homeDocument != null && toSetUp) {
