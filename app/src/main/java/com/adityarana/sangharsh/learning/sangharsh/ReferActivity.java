@@ -526,7 +526,7 @@ public class ReferActivity extends AppCompatActivity {
                 Intent intent = new Intent(android.content.Intent.ACTION_SEND);
                 String shareBody = "Hello, I want you to try the Sangharsh learning app. It has tons of content that can help you with your boards as well as competitive examinations." +
                         "Download it for free from playstore " +
-                        "https://play.google.com/store/apps/details?id=com.sangharsh.learning" +
+                        "https://play.google.com/store/apps/details?id=" + getApplicationContext().getPackageName() +
                         "\nIf you are prompted then use this code to sign up: " + referId.toUpperCase()  ;
                 intent.setType("text/plain");
                 intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Download Sangharsh Learning app");
